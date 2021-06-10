@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public CharacterController charController;
-    public CameraController cameraController;
+    
     public float playerMoveSpeed = 10f;
 
     private void Awake()
@@ -39,29 +39,7 @@ public class PlayerController : MonoBehaviour
         // move the player
         charController.Move(moveDirection);
 
-        Interactable lookAtItem = null;
-        Ray playerVision = new Ray(cameraController.playerCamera.transform.position, cameraController.playerCamera.transform.forward);
-        RaycastHit playerVisionEnd;
-
-        if (Physics.Raycast(playerVision, out playerVisionEnd, 10f))
-        {
-            lookAtItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
-            if (lookAtItem != null)
-            {
-                //Debug.Log("looking at an interactable object");
-            }
-        }
-
-        if (Input.GetKeyDown("f") )
-        {
-            Debug.Log("F pressed");
-            if (lookAtItem != null)
-            {
-                Debug.Log("Interacting");
-                lookAtItem.Interact();
-            }
-            
-        }
+        
 
         /*if (gameFocus && moveInput)
         {
