@@ -14,4 +14,14 @@ public class Interactable : MonoBehaviour
     {
         Debug.Log(objectName + ": print from interactable");
     }
+
+    public virtual void Inspect(PlayerInteraction playerInteraction)
+    {
+        // 
+    }
+
+    public void TossItem()
+    {
+        // toss items, might not need this
+    }
 }
