@@ -2,10 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CameraMode
+{ 
+    PlayMode = 0,
+    InspectMode = 1,
+    OutOfFocus = 3
+}
+
+
 public class CameraController : MonoBehaviour
 {
     public Camera playerCamera;
     public GameObject player;
+    public CameraMode cameraMode = CameraMode.OutOfFocus;
     public float rotateYSpeed = 10f;
     public float rotateXSpeed = 10f;
     public float camCurX = 0f;
@@ -28,7 +37,20 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        
+        // TO::DO check if this check should be here or player interaction
+        // when player pressed the escape to go into the ui
+        if (Input.GetKeyDown("escape"))
+        {
+            cameraMode = CameraMode.OutOfFocus;
+        }
+
+        // when player pressed left click to re focus
+        if (Input.GetMouseButtonDown(0))
+        {
+            cameraMode = CameraMode.PlayMode;
+        }
+
+        //Debug.Log(camCurX + " || " + camCurY);
     }
 
     private void LateUpdate()
@@ -36,41 +58,45 @@ public class CameraController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        //float yawValue = player.transform.eulerAngles.y + mouseX * Time.deltaTime * rotateXSpeed;
+        switch (cameraMode)
+        { 
+            case CameraMode.PlayMode:
+                camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed)) % 360;
+                camCurY += (mouseY * Time.deltaTime * rotateYSpeed * -1);
+                break;
+            case CameraMode.InspectMode:
+                break;
+            case CameraMode.OutOfFocus:
+                break;
+            default:
+                break;
+        }
 
-        //float pitchValue = playerCamera.transform.eulerAngles.x + (mouseY * Time.deltaTime * rotateYSpeed * -1);
-        camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed)) % 360;
-        camCurY += (mouseY * Time.deltaTime * rotateYSpeed * -1);
-        //Debug.Log(playerCamera.transform.eulerAngles.x);
+        // TO::DO add const variable for min and max
+        camCurY = Mathf.Clamp(camCurY, -80, 75);
 
-        camCurY = Mathf.Clamp(camCurY, -70, 80);
-        //float pitchValue = Mathf.Clamp(playerCamera.transform.eulerAngles.x + (mouseY * Time.deltaTime * rotateYSpeed * -1), -40, 60);
-
-        //Quaternion newPlayerRot = Quaternion.Euler(0f, yawValue, 0f);
-        //Quaternion newCameraRot = Quaternion.Euler(pitchValue, 90f + yawValue, 0f);
         Quaternion newPlayerRot = Quaternion.Euler(0f, camCurX, 0f);
         Quaternion newCameraRot = Quaternion.Euler(camCurY, camCurX + 90, 0f);
 
         player.transform.rotation = newPlayerRot;
         playerCamera.transform.rotation = newCameraRot;
 
-        
-        /*if (gameFocus && moveInput)
-        {
-            // get mouse axises
-            float mouseX = Input.GetAxis("Mouse X");
-            float mouseY = Input.GetAxis("Mouse Y");
+        //float yawValue = player.transform.eulerAngles.y + mouseX * Time.deltaTime * rotateXSpeed;
 
-            // assign new rotation value
-            float yawValue = player.transform.eulerAngles.y + mouseX * Time.deltaTime * yawTurnPower;
-            float pitchValue = playerCamera.transform.eulerAngles.x + (mouseY * Time.deltaTime * pitchTurnPower * -1);
+        //float pitchValue = playerCamera.transform.eulerAngles.x + (mouseY * Time.deltaTime * rotateYSpeed * -1);
+        //camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed)) % 360;
+        //camCurY += (mouseY * Time.deltaTime * rotateYSpeed * -1);
+        //Debug.Log(playerCamera.transform.eulerAngles.x);
+    }
 
-            Quaternion newPlayerRot = Quaternion.Euler(0f, yawValue, 0f);
-            Quaternion newCameraRot = Quaternion.Euler(pitchValue, 90f + yawValue, 0f);
-
-            // assign new value to respected gameobject
-            player.transform.rotation = newPlayerRot;
-            playerCamera.transform.rotation = newCameraRot;
-        }*/
+    private void OnApplicationFocus(bool focus)
+    {
+        // TO::DO re add app focus later
+        //cameraMode = focus ? CameraMode.PlayMode : CameraMode.OutOfFocus;
+    }
+    
+    public void UpdateCameraMode(CameraMode newCameraMode)
+    {
+        cameraMode = newCameraMode;
     }
 }

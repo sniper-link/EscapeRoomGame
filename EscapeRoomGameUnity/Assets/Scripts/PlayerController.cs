@@ -5,12 +5,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public CharacterController charController;
-    
+    public Transform playerCameraPos;
+    public bool isCrouching = false;
+    public float playerHeight;
+    public float cameraDiff = 0.36f;
+
     public float playerMoveSpeed = 10f;
 
     private void Awake()
     {
         // Add Checks here later
+        playerHeight = charController.height;
     }
 
     private void Start()
@@ -29,7 +34,6 @@ public class PlayerController : MonoBehaviour
         Vector3 rightDir = this.transform.right * -1;
 
         // construct new move direction
-        //Vector3 moveDirection = new Vector3(forwardMovement * forwardDir.x * Time.deltaTime, 0f, rightMovement * rightDir.z * Time.deltaTime);
         Vector3 moveDirection = new Vector3();
 
         moveDirection.x = -((forwardDir.x * rightMovement) + (rightDir.x * forwardMovement));
@@ -39,98 +43,38 @@ public class PlayerController : MonoBehaviour
         // move the player
         charController.Move(moveDirection);
 
-        
-
-        /*if (gameFocus && moveInput)
+        if (Input.GetKeyDown("left ctrl"))
         {
-
-            GameObject lookAtItem = null;
-            Ray playerVision = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-            RaycastHit playerVisionEnd;
-
-            if (Physics.Raycast(playerVision, out playerVisionEnd, 10f))
+            if (isCrouching)
             {
-                if (playerVisionEnd.collider.tag == "InteractableItem")
+                // TO::DO need to add a check to see if the player can stand up
+                /*
+                Collider[] capTest = Physics.OverlapSphere(transform.position + new Vector3(0, 1.5f, 0), 0.5f);
+                if (capTest.Length > 0)
                 {
-                    canInteract = true;
-                    lookAtItem = playerVisionEnd.collider.gameObject;
-                }
-                else if (playerVisionEnd.collider.tag == "Door")
-                {
-                    canInteract = true;
-                    lookAtItem = playerVisionEnd.collider.gameObject;
+                    Debug.Log("There is something in the way");
+                    foreach(Collider cap in capTest)
+                    {
+                        Debug.Log(cap.name);
+                    }
                 }
                 else
                 {
-                    canInteract = false;
-                }
-                //Debug.Log(playerVisionEnd.collider.name);
-            }
+                    Debug.Log("Can Stand up");
+                }*/
 
-            if (canInteract && Input.GetKeyDown("f") && lookAtItem != null)
+                charController.height = playerHeight;
+                charController.center = new Vector3(0, playerHeight / 2, 0);
+                playerCameraPos.localPosition = new Vector3(0, playerHeight - cameraDiff, 0);
+                isCrouching = !isCrouching;
+            }
+            else
             {
-                if (lookAtItem.tag == "InteractableItem")
-                {
-                    InteractableItem curItem = lookAtItem.GetComponent<InteractableItem>();
-
-                    m_playerInventory.AddToInventory(curItem);
-                    if (rightHandPos.transform.childCount == 0)
-                    {
-                        //lookAtItem.transform.position = new Vector3(0f, 0f, 0f);
-                        lookAtItem.transform.SetParent(rightHandPos.transform);
-
-                        lookAtItem.transform.rotation = new Quaternion();
-                        lookAtItem.transform.localPosition = new Vector3(0f, 0f, 0f);
-                        objectInHand = lookAtItem;
-                    }
-                    else
-                    {
-                        curItem.Interact();
-                    }
-                }
-                else if (lookAtItem.tag == "Door")
-                {
-                    lookAtItem.GetComponent<Door>().Interact(this.gameObject);
-                }
+                charController.height = playerHeight/2;
+                charController.center = new Vector3(0, playerHeight / 4, 0);
+                playerCameraPos.localPosition = new Vector3(0, playerHeight/2 - cameraDiff, 0);
+                isCrouching = !isCrouching;
             }
-
         }
-
-        if (Input.GetKeyDown("escape"))
-        {
-            if (m_playerUI.inUse)
-            {
-                m_playerUI.CloseKeypad();
-            }
-            else if (!m_playerUI.inUse)
-            {
-                gameFocus = !gameFocus;
-            }
-
-            //Cursor.visible = gameFocus;
-        }*/
     }
-
-    /*
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        gameFocus = hasFocus;
-    }
-
-    private void OnApplicationPause(bool gamePause)
-    {
-        gameFocus = !gamePause;
-    }
-
-    private void OnEnable()
-    {
-        gameFocus = true;
-    }
-
-    private void OnMouseDown()
-    {
-        gameFocus = true;
-        //Cursor.visible = false;
-    }
-    */
 }

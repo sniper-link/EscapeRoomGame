@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum TypeOfDoor
+{
+    Normal = 0,
+    KeyNLock = 1,
+    Combination = 2,
+    Activatiable = 3
+}
+
 public class Door : Interactable
 {
     // Start is called before the first frame update
@@ -9,6 +17,8 @@ public class Door : Interactable
     //public bool canInteract = true;
     public float timeToOpen = 1f;
     public Interactable itemToUnlockWith;
+    [SerializeField]
+    TypeOfDoor typeOfDoor;
 
     void Start()
     {

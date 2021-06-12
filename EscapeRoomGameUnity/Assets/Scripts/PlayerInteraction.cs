@@ -13,7 +13,9 @@ public class PlayerInteraction : MonoBehaviour
     public Transform leftHandPos;
     public Transform rightHandPos;
     public Transform twoHandPos;
+    public Transform inspectPos;
     public float tossForce = 100;
+    public float playerVisionDis = 2;
     
     private void Awake()
     {
@@ -31,7 +33,7 @@ public class PlayerInteraction : MonoBehaviour
         Ray playerVision = new Ray(cameraController.playerCamera.transform.position, cameraController.playerCamera.transform.forward);
         RaycastHit playerVisionEnd;
 
-        if (Physics.Raycast(playerVision, out playerVisionEnd, 10f))
+        if (Physics.Raycast(playerVision, out playerVisionEnd, playerVisionDis))
         {
             targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
             if (targetItem != null)
@@ -42,21 +44,37 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown("f"))
         {
-            Debug.Log("F pressed");
             if (targetItem != null)
             {
                 Debug.Log("Interacting");
                 targetItem.Interact(this);
             }
-            else
+        }
+
+        if (Input.GetKey("e"))
+        {
+            playerInventory.GetLeftHandItem(out Interactable itemRefL);
+            playerInventory.GetRightHandItem(out Interactable itemRefR);
+            if (Input.GetMouseButton(0) && itemRefL != null)
             {
-                Debug.Log("No Interactable Item in sight");
+                itemRefL.transform.parent = null;
+                Rigidbody lhItemRB = itemRefL.GetComponent<Rigidbody>();
+                lhItemRB.isKinematic = false;
+                Debug.Log("Left Item dropped");
+                playerInventory.RemoveLeftHandItem();
+            }
+            else if (Input.GetMouseButton(1) && itemRefR != null)
+            {
+                itemRefR.transform.parent = null;
+                Rigidbody rhItemRB = itemRefR.GetComponent<Rigidbody>();
+                rhItemRB.isKinematic = false;
+                Debug.Log("Right Item dropped");
+                playerInventory.RemoveRightHandItem();
             }
         }
 
         if (Input.GetKey("q"))
         {
-            //Debug.Log("Tossing Item");
             playerInventory.GetLeftHandItem(out Interactable itemRefL);
             playerInventory.GetRightHandItem(out Interactable itemRefR);
             if (Input.GetMouseButton(0) && itemRefL != null)
