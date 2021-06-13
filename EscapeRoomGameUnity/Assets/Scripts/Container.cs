@@ -8,7 +8,7 @@ public class Container : Interactable
     public int containerSpace;
     public List<Interactable> requiredItems;
     public List<Interactable> storedItems;
-    private List<Interactable> testList = new List<Interactable>();
+    public Transform storeLocation;
 
     private void Start()
     {
@@ -32,6 +32,17 @@ public class Container : Interactable
         {
             requiredItems.Remove(newItem);
             storedItems.Add(newItem);
+            newItem.transform.parent = storeLocation;
+            newItem.transform.position = storeLocation.position;
+            newItem.GetComponent<Rigidbody>().isKinematic = true;
+            newItem.GetComponent<Rigidbody>().useGravity = false;
+            newItem.GetComponent<Rigidbody>().mass = 0;
+            //newItem.GetComponent<BoxCollider>().enabled = false;
+            foreach (BoxCollider box in newItem.GetComponents<BoxCollider>())
+            {
+                //box.isTrigger = true;
+                box.enabled = false;
+            }
         }
     }
 }
