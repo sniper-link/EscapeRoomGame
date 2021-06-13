@@ -3,6 +3,10 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+[Ll]ogs/
+/[Ll]ogs/
+[Uu]ser[Ss]ettings/
+/[Uu]ser[Ss]ettings/
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -35,6 +39,3 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-
-# Asset Import Worker Log
-[Ll]ogs/
