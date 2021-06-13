@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 8931343880292681006}
   - component: {fileID: 4825127823019959379}
   m_Layer: 0
-  m_Name: Square_Table
+  m_Name: SquareTableInter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
