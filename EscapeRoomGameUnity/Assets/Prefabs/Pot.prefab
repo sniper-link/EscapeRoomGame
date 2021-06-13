@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2003707064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2003707065}
+  m_Layer: 0
+  m_Name: StoreLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2003707065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003707064}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.218, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8103748702994878902}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &696703910747310469
 GameObject:
   m_ObjectHideFlags: 0
@@ -14,6 +44,7 @@ GameObject:
   - component: {fileID: 9103962309513837899}
   - component: {fileID: 9103962309513837900}
   - component: {fileID: 9103962309513837901}
+  - component: {fileID: 363760809}
   m_Layer: 0
   m_Name: Pot
   m_TagString: Untagged
@@ -125,6 +156,20 @@ CapsuleCollider:
   m_Height: 0.02
   m_Direction: 0
   m_Center: {x: 0, y: -0.000000025331975, z: 0.00052748027}
+--- !u!64 &363760809
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696703910747310469}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8517725900640002782, guid: 3ba118a55d22ae2458846a0f2115b0de, type: 3}
 --- !u!1 &8646055863374562092
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +211,7 @@ GameObject:
   - component: {fileID: 8103748702994878902}
   - component: {fileID: 8646055863814643489}
   - component: {fileID: 8646055863814643491}
-  - component: {fileID: 919132148401668036}
+  - component: {fileID: 979209463}
   m_Layer: 0
   m_Name: Pot
   m_TagString: Untagged
@@ -187,6 +232,7 @@ Transform:
   m_Children:
   - {fileID: 5592197213279766523}
   - {fileID: 8646055863374562091}
+  - {fileID: 2003707065}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -224,13 +270,14 @@ MonoBehaviour:
   twoHandItem: 0
   twoHandPos: {fileID: 8646055863374562091}
   isCompleted: 0
-  containerSpace: 0
+  containerSpace: 5
   requiredItems:
   - {fileID: 0}
   - {fileID: 0}
   storedItems: []
---- !u!135 &919132148401668036
-SphereCollider:
+  storeLocation: {fileID: 2003707065}
+--- !u!65 &979209463
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -240,5 +287,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3200593
-  m_Center: {x: 0, y: 0.24127, z: 0}
+  m_Size: {x: 0.4, y: 0.1, z: 0.35}
+  m_Center: {x: 0, y: 0.51, z: 0}
