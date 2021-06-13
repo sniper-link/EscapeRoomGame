@@ -37,5 +37,4 @@ sysinfo.txt
 *.unitypackage
 
 # Asset Import Worker Log
-[Ll]ogs
-
+[Ll]ogs/
