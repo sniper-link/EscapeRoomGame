@@ -14,7 +14,7 @@ public class Door : Interactable
 {
     // Start is called before the first frame update
     public bool isOpen = false;
-    //public bool canInteract = true;
+    public bool canInteract = true;
     public float timeToOpen = 1f;
     public Interactable itemToUnlockWith;
     [SerializeField]
@@ -33,7 +33,6 @@ public class Door : Interactable
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
-        Debug.Log("Door Open");
         if (canInteract)
         {
             if (itemToUnlockWith == null)
@@ -42,21 +41,17 @@ public class Door : Interactable
                 {
                     Vector3 oldRotation = this.transform.eulerAngles;
                     Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
-                    //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, newRotation, 1f);
                     isOpen = true;
                     canInteract = false;
                     StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                    //this.canInteract = true;
                 }
                 else
                 {
                     Vector3 oldRotation = this.transform.eulerAngles;
                     Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y - 90, oldRotation.z);
-                    //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, newRotation, 1f);
                     isOpen = false;
                     canInteract = false;
                     StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                    //this.canInteract = true;
                 }
             }
             else if (itemToUnlockWith != null)
@@ -96,6 +91,27 @@ public class Door : Interactable
             }
         }
         
+    }
+
+    public void OpenDoor()
+    {
+        Debug.Log("Door Open");
+        if (!isOpen)
+        {
+            Vector3 oldRotation = this.transform.eulerAngles;
+            Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
+            isOpen = true;
+            canInteract = false;
+            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
+        }
+        else
+        {
+            Vector3 oldRotation = this.transform.eulerAngles;
+            Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y - 90, oldRotation.z);
+            isOpen = false;
+            canInteract = false;
+            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
+        }
     }
 
     IEnumerator DoorOpening(Quaternion a, Quaternion b, float curTime)

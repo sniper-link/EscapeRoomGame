@@ -9,6 +9,7 @@ public enum CameraMode
     OutOfFocus = 3
 }
 
+// TO::DO update camera controller script to reflect how camera works with inspection
 
 public class CameraController : MonoBehaviour
 {
@@ -45,12 +46,10 @@ public class CameraController : MonoBehaviour
         }
 
         // when player pressed left click to re focus
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(2))
         {
             cameraMode = CameraMode.PlayMode;
         }
-
-        //Debug.Log(camCurX + " || " + camCurY);
     }
 
     private void LateUpdate()
@@ -80,13 +79,6 @@ public class CameraController : MonoBehaviour
 
         player.transform.rotation = newPlayerRot;
         playerCamera.transform.rotation = newCameraRot;
-
-        //float yawValue = player.transform.eulerAngles.y + mouseX * Time.deltaTime * rotateXSpeed;
-
-        //float pitchValue = playerCamera.transform.eulerAngles.x + (mouseY * Time.deltaTime * rotateYSpeed * -1);
-        //camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed)) % 360;
-        //camCurY += (mouseY * Time.deltaTime * rotateYSpeed * -1);
-        //Debug.Log(playerCamera.transform.eulerAngles.x);
     }
 
     private void OnApplicationFocus(bool focus)
@@ -98,5 +90,15 @@ public class CameraController : MonoBehaviour
     public void UpdateCameraMode(CameraMode newCameraMode)
     {
         cameraMode = newCameraMode;
+    }
+
+    public void PausePlayerCamera()
+    {
+
+    }
+
+    public void ResumePlayerCamera()
+    {
+
     }
 }

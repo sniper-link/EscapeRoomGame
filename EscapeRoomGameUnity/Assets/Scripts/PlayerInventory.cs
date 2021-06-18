@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Side
+{
+    Left = 0,
+    Right = 1,
+    Both = 2
+}
+
+
 public class PlayerInventory : MonoBehaviour
 {
 
@@ -10,7 +18,6 @@ public class PlayerInventory : MonoBehaviour
     // two-space worth of items at a time
     // ex. a candle holder and a key
     // or a table or something big
-    // Start is called before the first frame update
 
     [SerializeField]
     private Interactable leftHandItem, rightHandItem;

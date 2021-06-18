@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4932677234648732857}
   - component: {fileID: 1812245933509054195}
   - component: {fileID: 1812245933509054194}
-  - component: {fileID: 1812245933509054192}
   - component: {fileID: 8598947932262169699}
   - component: {fileID: 2627344866438602610}
   - component: {fileID: 8931343880292681006}
@@ -118,23 +117,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.064321935, y: 0.0061515183, z: 0.06432193}
   m_Center: {x: 0, y: 0.046350483, z: -0.0000000048863185}
---- !u!114 &1812245933509054192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1128955109313608218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 411e9bf49f02d43428d9355301ead742, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectName: Table
-  canInteract: 1
-  canPickup: 1
-  twoHandItem: 1
-  twoHandPos: {fileID: 3869711492148887620}
 --- !u!65 &8598947932262169699
 BoxCollider:
   m_ObjectHideFlags: 0

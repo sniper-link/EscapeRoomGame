@@ -5,10 +5,10 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public string objectName = "Egg";
-    public bool canInteract = true;
+    //public bool canInteract = true;
     public bool canPickup = true;
-    public bool twoHandItem = false;
-    public Transform twoHandPos;
+    //public bool twoHandItem = false;
+    //public Transform twoHandPos;
 
     public virtual void Interact(PlayerInteraction playerInteraction)
     {
@@ -17,11 +17,16 @@ public class Interactable : MonoBehaviour
 
     public virtual void Inspect(PlayerInteraction playerInteraction)
     {
-        // 
+        
     }
 
-    public void TossItem()
+    public void DropItem()
     {
-        // toss items, might not need this
+
+    }
+
+    public virtual void Use(Interactable targetItem)
+    {
+
     }
 }

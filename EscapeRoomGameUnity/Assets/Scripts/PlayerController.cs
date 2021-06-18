@@ -38,6 +38,13 @@ public class PlayerController : MonoBehaviour
 
         moveDirection.x = -((forwardDir.x * rightMovement) + (rightDir.x * forwardMovement));
         moveDirection.z = -((forwardDir.z * rightMovement) + (rightDir.z * forwardMovement));
+        
+
+        if (!charController.isGrounded)
+        {
+            moveDirection.y = -0.9f;
+        }
+
         moveDirection *= playerMoveSpeed * Time.deltaTime;
 
         // move the player

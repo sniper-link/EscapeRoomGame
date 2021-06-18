@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TO::DO add animation to all of the actions
+// TO::DO clean up code and make everything into functions
+
 [RequireComponent(typeof(PlayerInventory))]
 public class PlayerInteraction : MonoBehaviour
 {
@@ -10,16 +13,20 @@ public class PlayerInteraction : MonoBehaviour
     // left hand first
     public CameraController cameraController;
     public PlayerInventory playerInventory;
+    public PlayerUI playerUI;
     public Transform leftHandPos;
     public Transform rightHandPos;
     public Transform twoHandPos;
     public Transform inspectPos;
+    public Interactable curInspectItem;
     public float tossForce = 100;
     public float playerVisionDis = 2;
+    public float timeBetweenAction = 0f;
     
     private void Awake()
     {
         // use this to check for stuff
+        timeBetweenAction = 0f;
     }
 
     private void Start()
@@ -29,133 +36,197 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        Interactable targetItem = null;
-        Ray playerVision = new Ray(cameraController.playerCamera.transform.position, cameraController.playerCamera.transform.forward);
-        RaycastHit playerVisionEnd;
-
-        if (Physics.Raycast(playerVision, out playerVisionEnd, playerVisionDis))
+        if (cameraController.cameraMode == CameraMode.PlayMode)
         {
-            targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
-            if (targetItem != null)
+            Interactable targetItem = null;
+            Ray playerVision = new Ray(cameraController.playerCamera.transform.position, cameraController.playerCamera.transform.forward);
+            RaycastHit playerVisionEnd;
+
+            if (Physics.Raycast(playerVision, out playerVisionEnd, playerVisionDis))
             {
-                //Debug.Log("looking at an interactable object");
+                targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
+                if (targetItem != null)
+                {
+                    //Debug.Log("looking at an interactable object");
+                }
+
             }
-        }
 
-        if (Input.GetKeyDown("f"))
-        {
-            if (targetItem != null)
+            playerUI.ShowMBAction(targetItem != null);
+
+
+            // left side will always be first
             {
-                Debug.Log("Interacting");
+                // TO::DO add a cooldown between pick ups
+                
+                if (Input.GetMouseButton(0))
+                {
+                    playerInventory.GetLeftHandItem(out Interactable itemRef);
+                    
+                    if (itemRef == null)
+                    {
+                        if (targetItem != null && targetItem.canPickup)
+                        {
+                            playerInventory.AddLeftHandItem(targetItem, out bool addSuccess);
+                            if (addSuccess)
+                            {
+                                targetItem.GetComponent<Rigidbody>().isKinematic = true;
+                                targetItem.transform.parent = leftHandPos;
+                                targetItem.transform.localPosition = new Vector3(0, 0, 0);
+                                targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                                // TO::DO add animation for raising hand
+                            }
+                        }
+                    }
+                    else
+                    {
+                        playerUI.ShowHandMenu(Side.Left, itemRef != null);
+                        if (Input.GetKeyDown("q"))
+                        {
+                            // ray cast to the ground and if there is space, put the item there
+                            Ray itemDropDis = new Ray(leftHandPos.transform.position, transform.up * -1);
+                            RaycastHit itemDropEnd;
+                            if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
+                            {
+                                itemRef.transform.parent = null;
+                                itemRef.transform.position = itemDropEnd.point;
+                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                                playerInventory.RemoveLeftHandItem();
+                            }
+                        }
+                        if (Input.GetKeyDown("e"))
+                        {
+                            if (targetItem != null)
+                            {
+                                targetItem.Use(itemRef);
+                                itemRef.transform.parent = targetItem.transform;
+                                itemRef.transform.localPosition = new Vector3(0, 0, 0);
+                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                                playerInventory.RemoveLeftHandItem();
+                                return;
+                            }
+                        }
+                        if (Input.GetKeyDown("f"))
+                        {
+                            Debug.Log("Inspecting Mode");
+                            if (curInspectItem == null)
+                            {
+                                InspectObject(itemRef);
+                            }
+                        }
+                    }
+                }
+                else if (Input.GetMouseButtonUp(0))
+                {
+                    playerUI.ShowHandMenu(Side.Left, false);
+                }
+
+                if (Input.GetMouseButton(1))
+                {
+                    playerInventory.GetRightHandItem(out Interactable itemRef);
+                    
+                    if (itemRef == null)
+                    {
+                        if (targetItem != null && targetItem.canPickup)
+                        {
+                            playerInventory.AddRightHandItem(targetItem, out bool addSuccess);
+                            if (addSuccess)
+                            {
+                                targetItem.GetComponent<Rigidbody>().isKinematic = true;
+                                targetItem.transform.parent = rightHandPos;
+                                targetItem.transform.localPosition = new Vector3(0, 0, 0);
+                                targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        playerUI.ShowHandMenu(Side.Right, itemRef != null);
+                        if (Input.GetKeyDown("q"))
+                        {
+                            // ray cast to the ground and if there is space, put the item there
+                            Ray itemDropDis = new Ray(rightHandPos.transform.position, transform.up * -1);
+                            RaycastHit itemDropEnd;
+                            if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
+                            {
+                                itemRef.transform.parent = null;
+                                itemRef.transform.position = itemDropEnd.point;
+                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                                playerInventory.RemoveRightHandItem();
+                            }
+                        }
+                        if (Input.GetKeyDown("e"))
+                        {
+                            if (targetItem != null)
+                            {
+                                Debug.Log("Interacting with another object");
+                            }
+                        }
+                        if (Input.GetKeyDown("f"))
+                        {
+                            Debug.Log("Inspecting Mode");
+                            if (curInspectItem == null)
+                            {
+                                InspectObject(itemRef);
+                            }
+
+                        }
+                    }
+                }
+                else if (Input.GetMouseButtonUp(1))
+                {
+                    //playerUI.ShowLeftHandMenu(false);
+                    playerUI.ShowHandMenu(Side.Right, false);
+                }
+            }
+
+            if (Input.GetKeyDown("e") && targetItem != null)
+            {
                 targetItem.Interact(this);
             }
-        }
 
-        if (Input.GetKey("e"))
-        {
-            playerInventory.GetLeftHandItem(out Interactable itemRefL);
-            playerInventory.GetRightHandItem(out Interactable itemRefR);
-            if (Input.GetMouseButton(0) && itemRefL != null)
+            /*if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
-                itemRefL.transform.parent = null;
-                Rigidbody lhItemRB = itemRefL.GetComponent<Rigidbody>();
-                lhItemRB.isKinematic = false;
-                Debug.Log("Left Item dropped");
-                playerInventory.RemoveLeftHandItem();
-            }
-            else if (Input.GetMouseButton(1) && itemRefR != null)
-            {
-                itemRefR.transform.parent = null;
-                Rigidbody rhItemRB = itemRefR.GetComponent<Rigidbody>();
-                rhItemRB.isKinematic = false;
-                Debug.Log("Right Item dropped");
-                playerInventory.RemoveRightHandItem();
-            }
-        }
+                playerUI.ShowHandMenu(Side.Left, Input.GetMouseButton(0));
+                playerUI.ShowHandMenu(Side.Right, Input.GetMouseButton(1));
 
-        if (Input.GetKey("q"))
-        {
-            playerInventory.GetLeftHandItem(out Interactable itemRefL);
-            playerInventory.GetRightHandItem(out Interactable itemRefR);
-            if (Input.GetMouseButton(0) && itemRefL != null)
-            {
-                itemRefL.transform.parent = null;
-                Rigidbody lhItemRB = itemRefL.GetComponent<Rigidbody>();
-                lhItemRB.isKinematic = false;
-                lhItemRB.AddForce(cameraController.playerCamera.transform.forward * tossForce);
-                Debug.Log("Left Item tossed");
-                playerInventory.RemoveLeftHandItem();
-            }
-            else if (Input.GetMouseButton(1) && itemRefR != null)
-            {
-                itemRefR.transform.parent = null;
-                Rigidbody rhItemRB = itemRefR.GetComponent<Rigidbody>();
-                rhItemRB.isKinematic = false;
-                rhItemRB.AddForce(cameraController.playerCamera.transform.forward * tossForce);
-                Debug.Log("Right Item tossed");
-                playerInventory.RemoveRightHandItem();
-            }
-            /*if (playerInventory.rightHandItem != null)
-            {
-                playerInventory.rightHandItem.transform.parent = null;
-                Rigidbody lhItemRB = playerInventory.rightHandItem.gameObject.GetComponent<Rigidbody>();
-                lhItemRB.isKinematic = false;
-                lhItemRB.AddForce(cameraController.playerCamera.transform.forward * tossForce);
-                Debug.Log("Item Tossed: " + cameraController.playerCamera.transform.forward * tossForce);
-                playerInventory.rightHandItem = null;
-            }
-            else
-            {
-                Debug.Log("no item toss");
-            } */   
-        }
 
-        // for using with left mouse button
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (targetItem != null && targetItem.canPickup && !targetItem.twoHandItem)
-            {
-                playerInventory.AddLeftHandItem(targetItem, out bool addSuccess);
-                if (addSuccess)
-                {
-                    targetItem.GetComponent<Rigidbody>().isKinematic = true;
-                    targetItem.transform.parent = leftHandPos;
-                    targetItem.transform.localPosition = new Vector3(0, 0, 0);
-                    targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                }
-            }
+            }*/
+
         }
-        // for using with right mouse button
-        else if (Input.GetMouseButtonUp(1))
+        else if (cameraController.cameraMode == CameraMode.InspectMode)
         {
-            if (targetItem != null && targetItem.canPickup && !targetItem.twoHandItem)
+            //playerInventory.GetLeftHandItem(out Interactable itemRef);
+            if (Input.GetKeyDown("f"))
             {
-                playerInventory.AddRightHandItem(targetItem, out bool addSuccess);
-                if (addSuccess)
-                {
-                    targetItem.GetComponent<Rigidbody>().isKinematic = true;
-                    targetItem.transform.parent = rightHandPos;
-                    targetItem.transform.localPosition = new Vector3(0, 0, 0);
-                    targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                }
+                StopInspectObject();
+                return;
             }
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
+
+            // TO::DO need to add rotation to the inspected objects base on the camera
+            Vector3 oldRot = curInspectItem.transform.rotation.eulerAngles;
+            curInspectItem.transform.rotation = Quaternion.Euler(oldRot + new Vector3(mouseY, -mouseX, 0f));
         }
+    }
+
+    public void InspectObject(Interactable targetItem)
+    {
+        curInspectItem = targetItem;
+        cameraController.UpdateCameraMode(CameraMode.InspectMode);
+        targetItem.transform.parent = inspectPos;
+        targetItem.transform.SetPositionAndRotation(inspectPos.position, Quaternion.Euler(0, 0, 0));
+    }
+
+    public void StopInspectObject()
+    {
         
-        if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
-        {
-            Debug.Log("try two hand");
-            if (targetItem != null && targetItem.canPickup && targetItem.twoHandItem)
-            {
-                playerInventory.AddTwoHandItem(targetItem, out bool addSuccess);
-                if (addSuccess)
-                {
-                    targetItem.GetComponent<Rigidbody>().isKinematic = true;
-                    targetItem.transform.parent = twoHandPos;
-                    targetItem.transform.localPosition = targetItem.transform.position  - targetItem.twoHandPos.position; // - targetItem.twoHandPos.localPosition;
-                    targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    //Debug.Log(targetItem.twoHandPos.localPosition);
-                }
-            }
-        }
+        Debug.Log("Quit Inspect Mode");
+        cameraController.UpdateCameraMode(CameraMode.PlayMode);
+
+        curInspectItem.transform.parent = leftHandPos.transform;
+        curInspectItem.transform.SetPositionAndRotation(leftHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+        curInspectItem = null;
     }
 }
