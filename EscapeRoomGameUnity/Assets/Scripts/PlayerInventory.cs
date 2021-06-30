@@ -2,14 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Side
-{
-    Left = 0,
-    Right = 1,
-    Both = 2
-}
-
-
 public class PlayerInventory : MonoBehaviour
 {
 
@@ -22,11 +14,22 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private Interactable leftHandItem, rightHandItem;
 
-    public void AddLeftHandItem(Interactable targetItem, out bool addSuccess)
+    public void AddLeftHandItem(Interactable targetItem, Transform handLoc, out bool addSuccess)
     {
         if (leftHandItem == null)
         {
             leftHandItem = targetItem;
+            if (targetItem.storedObject != null && targetItem.storedObject.TryGetComponent<Lock>(out Lock testLock))
+            {
+                testLock.insertItem = null;
+            }
+
+            targetItem.GetComponent<Rigidbody>().isKinematic = true;
+            targetItem.transform.parent = handLoc;
+            targetItem.transform.localPosition = new Vector3(0, 0, 0);
+            targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            // TO::DO add animation for raising hand
+
             addSuccess = true;
         }
         else
@@ -35,11 +38,22 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    public void AddRightHandItem(Interactable targetItem, out bool addSuccess)
+    public void AddRightHandItem(Interactable targetItem, Transform handLoc, out bool addSuccess)
     {
         if (rightHandItem == null)
         {
             rightHandItem = targetItem;
+            if (targetItem.storedObject != null && targetItem.storedObject.TryGetComponent<Lock>(out Lock testLock))
+            {
+                testLock.insertItem = null;
+            }
+
+            targetItem.GetComponent<Rigidbody>().isKinematic = true;
+            targetItem.transform.parent = handLoc;
+            targetItem.transform.localPosition = new Vector3(0, 0, 0);
+            targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            // TO::DO add animation for raising hand
+
             addSuccess = true;
         }
         else
@@ -63,28 +77,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    /*
-    public void AddItem(Interactable targetItem, out bool addSuccess)
+    public void GetBothHandItem(out Interactable leftHandItem, out Interactable rightHandItem)
     {
-        if (rightHandItem)
-        {
-            if (leftHandItem)
-            {
-                Debug.LogWarning("WARN: Both Left and Right hand already have an item");
-                addSuccess = false;
-            }
-            else
-            {
-                leftHandItem = targetItem;
-                addSuccess = true;
-            }
-        }
-        else
-        {
-            rightHandItem = targetItem;
-            addSuccess = true;
-        }
-    }*/
+        leftHandItem = this.leftHandItem;
+        rightHandItem = this.rightHandItem;
+    }
 
     public void RemoveLeftHandItem()
     {

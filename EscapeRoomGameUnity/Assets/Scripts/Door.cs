@@ -2,13 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-enum TypeOfDoor
-{
-    Normal = 0,
-    KeyNLock = 1,
-    Combination = 2,
-    Activatiable = 3
-}
+
 
 public class Door : Interactable
 {
@@ -17,8 +11,8 @@ public class Door : Interactable
     public bool canInteract = true;
     public float timeToOpen = 1f;
     public Interactable itemToUnlockWith;
-    [SerializeField]
-    TypeOfDoor typeOfDoor;
+    public List<Lock> needLocks;
+    public List<Lock> completedLocks;
 
     void Start()
     {
@@ -90,28 +84,28 @@ public class Door : Interactable
                 }
             }
         }
-        
+    }
+
+    public void UpdateDoorLocks(Lock targetLock)
+    {
+        if (needLocks.Contains(targetLock) && targetLock.isFinished)
+        {
+            needLocks.Remove(targetLock);
+            completedLocks.Add(targetLock);
+            if (needLocks.Count == 0)
+            {
+                OpenDoor();
+            }
+        }
     }
 
     public void OpenDoor()
     {
-        Debug.Log("Door Open");
-        if (!isOpen)
-        {
-            Vector3 oldRotation = this.transform.eulerAngles;
-            Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
-            isOpen = true;
-            canInteract = false;
-            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-        }
-        else
-        {
-            Vector3 oldRotation = this.transform.eulerAngles;
-            Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y - 90, oldRotation.z);
-            isOpen = false;
-            canInteract = false;
-            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-        }
+        Vector3 oldRotation = this.transform.eulerAngles;
+        Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + (isOpen ? -90f : 90), oldRotation.z);
+        isOpen = !isOpen;
+        canInteract = false;
+        StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
     }
 
     IEnumerator DoorOpening(Quaternion a, Quaternion b, float curTime)
@@ -125,8 +119,9 @@ public class Door : Interactable
         }
         else
         {
-            Debug.Log("done opening");
-            canInteract = true;
+            // TO::DO check this later
+            //Debug.Log("done opening");
+            //canInteract = true;
         }
         yield return 0;
         

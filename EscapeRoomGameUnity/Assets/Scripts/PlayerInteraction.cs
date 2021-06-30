@@ -67,15 +67,15 @@ public class PlayerInteraction : MonoBehaviour
                     {
                         if (targetItem != null && targetItem.canPickup)
                         {
-                            playerInventory.AddLeftHandItem(targetItem, out bool addSuccess);
-                            if (addSuccess)
+                            playerInventory.AddLeftHandItem(targetItem, leftHandPos, out bool addSuccess);
+                            /*if (addSuccess)
                             {
                                 targetItem.GetComponent<Rigidbody>().isKinematic = true;
                                 targetItem.transform.parent = leftHandPos;
                                 targetItem.transform.localPosition = new Vector3(0, 0, 0);
                                 targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
                                 // TO::DO add animation for raising hand
-                            }
+                            }*/
                         }
                     }
                     else
@@ -83,8 +83,13 @@ public class PlayerInteraction : MonoBehaviour
                         playerUI.ShowHandMenu(Side.Left, itemRef != null);
                         if (Input.GetKeyDown("q"))
                         {
+                            itemRef.DropItem(leftHandPos, out bool dropSuccess);
+                            if (dropSuccess)
+                            {
+                                playerInventory.RemoveLeftHandItem();
+                            }
                             // ray cast to the ground and if there is space, put the item there
-                            Ray itemDropDis = new Ray(leftHandPos.transform.position, transform.up * -1);
+                            /*Ray itemDropDis = new Ray(leftHandPos.transform.position, transform.up * -1);
                             RaycastHit itemDropEnd;
                             if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
                             {
@@ -92,17 +97,20 @@ public class PlayerInteraction : MonoBehaviour
                                 itemRef.transform.position = itemDropEnd.point;
                                 itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
                                 playerInventory.RemoveLeftHandItem();
-                            }
+                            }*/
                         }
                         if (Input.GetKeyDown("e"))
                         {
                             if (targetItem != null)
                             {
-                                targetItem.Use(itemRef);
-                                itemRef.transform.parent = targetItem.transform;
+                                targetItem.Use(itemRef, out bool useSuccess);
+                                /*(itemRef.transform.parent = targetItem.transform;
                                 itemRef.transform.localPosition = new Vector3(0, 0, 0);
-                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                                playerInventory.RemoveLeftHandItem();
+                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);*/
+                                if (useSuccess)
+                                {
+                                    playerInventory.RemoveLeftHandItem();
+                                }
                                 return;
                             }
                         }
@@ -129,14 +137,14 @@ public class PlayerInteraction : MonoBehaviour
                     {
                         if (targetItem != null && targetItem.canPickup)
                         {
-                            playerInventory.AddRightHandItem(targetItem, out bool addSuccess);
-                            if (addSuccess)
+                            playerInventory.AddRightHandItem(targetItem, rightHandPos, out bool addSuccess);
+                            /*if (addSuccess)
                             {
                                 targetItem.GetComponent<Rigidbody>().isKinematic = true;
                                 targetItem.transform.parent = rightHandPos;
                                 targetItem.transform.localPosition = new Vector3(0, 0, 0);
                                 targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                            }
+                            }*/
                         }
                     }
                     else
@@ -144,8 +152,13 @@ public class PlayerInteraction : MonoBehaviour
                         playerUI.ShowHandMenu(Side.Right, itemRef != null);
                         if (Input.GetKeyDown("q"))
                         {
+                            itemRef.DropItem(leftHandPos, out bool dropSuccess);
+                            if (dropSuccess)
+                            {
+                                playerInventory.RemoveLeftHandItem();
+                            }
                             // ray cast to the ground and if there is space, put the item there
-                            Ray itemDropDis = new Ray(rightHandPos.transform.position, transform.up * -1);
+                            /*Ray itemDropDis = new Ray(rightHandPos.transform.position, transform.up * -1);
                             RaycastHit itemDropEnd;
                             if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
                             {
@@ -153,13 +166,20 @@ public class PlayerInteraction : MonoBehaviour
                                 itemRef.transform.position = itemDropEnd.point;
                                 itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
                                 playerInventory.RemoveRightHandItem();
-                            }
+                            }*/
                         }
                         if (Input.GetKeyDown("e"))
                         {
                             if (targetItem != null)
                             {
-                                Debug.Log("Interacting with another object");
+                                targetItem.Use(itemRef, out bool useSuccess);
+                                /*(itemRef.transform.parent = targetItem.transform;
+                                itemRef.transform.localPosition = new Vector3(0, 0, 0);
+                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);*/
+                                if (useSuccess)
+                                {
+                                    playerInventory.RemoveLeftHandItem();
+                                }
                             }
                         }
                         if (Input.GetKeyDown("f"))

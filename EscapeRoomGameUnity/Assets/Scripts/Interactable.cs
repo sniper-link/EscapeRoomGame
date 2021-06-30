@@ -5,14 +5,19 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public string objectName = "Egg";
-    //public bool canInteract = true;
     public bool canPickup = true;
-    //public bool twoHandItem = false;
-    //public Transform twoHandPos;
+    public Interactable storedObject;
 
     public virtual void Interact(PlayerInteraction playerInteraction)
     {
         Debug.Log(objectName + ": print from interactable");
+        //storedObject.GetComponent<Container>();
+        // remove pickup object from their location
+        if (storedObject.TryGetComponent<Lock>(out Lock testLock))
+        {
+            Debug.Log("Lol");
+            testLock.insertItem = null;
+        }
     }
 
     public virtual void Inspect(PlayerInteraction playerInteraction)
@@ -20,13 +25,43 @@ public class Interactable : MonoBehaviour
         
     }
 
-    public void DropItem()
+    public virtual void Use(Interactable targetItem, out bool useSuccess)
     {
-
+        storedObject = targetItem;
+        targetItem.transform.parent = this.transform;
+        targetItem.transform.localPosition = new Vector3(0, 0, 0);
+        targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        useSuccess = true;
     }
 
-    public virtual void Use(Interactable targetItem)
+    public void DropItem(Transform startLoc, out bool dropSuccess)
     {
+        // ray cast to the ground and if there is space, put the item there
+        Ray itemDropDis = new Ray(startLoc.position, transform.up * -1);
+        RaycastHit itemDropEnd;
+        dropSuccess = false;
+        if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
+        {
+            this.transform.parent = null;
+            this.transform.position = itemDropEnd.point;
+            this.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            dropSuccess = true;
+            //playerInventory.RemoveLeftHandItem();
+        }
+    }
 
+    public void DisableItem()
+    {
+        // Disable all of the colliders
+        Collider[] colliders = GetComponents<Collider>();
+        foreach (Collider col in colliders)
+        {
+            col.enabled = false;
+        }    
+    }
+
+    public virtual void RemoveFrom()
+    {
+        Debug.Log("calling from interactable");
     }
 }

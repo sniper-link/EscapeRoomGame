@@ -2,12 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CameraMode
-{ 
-    PlayMode = 0,
-    InspectMode = 1,
-    OutOfFocus = 3
-}
+
 
 // TO::DO update camera controller script to reflect how camera works with inspection
 
@@ -27,6 +22,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         //Cursor.visible = false;
+        camCurX = player.transform.rotation.eulerAngles.y % 360;
     }
 
     private void Start()
@@ -75,10 +71,10 @@ public class CameraController : MonoBehaviour
         camCurY = Mathf.Clamp(camCurY, -80, 75);
 
         Quaternion newPlayerRot = Quaternion.Euler(0f, camCurX, 0f);
-        Quaternion newCameraRot = Quaternion.Euler(camCurY, camCurX + 90, 0f);
+        Quaternion newCameraRot = Quaternion.Euler(camCurY, 90f, 0f);
 
-        player.transform.rotation = newPlayerRot;
-        playerCamera.transform.rotation = newCameraRot;
+        player.transform.localRotation = newPlayerRot;
+        playerCamera.transform.localRotation = newCameraRot;
     }
 
     private void OnApplicationFocus(bool focus)
