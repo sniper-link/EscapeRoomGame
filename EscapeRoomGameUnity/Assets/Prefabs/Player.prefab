@@ -1035,6 +1035,7 @@ MonoBehaviour:
   curInspectItem: {fileID: 0}
   tossForce: 500
   playerVisionDis: 2
+  timeBetweenAction: 0
 --- !u!1 &3758767592748952620
 GameObject:
   m_ObjectHideFlags: 0
