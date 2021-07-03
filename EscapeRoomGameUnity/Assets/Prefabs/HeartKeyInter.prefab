@@ -9,11 +9,24 @@ MeshCollider:
   m_GameObject: {fileID: 425022072686144865}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3456366094912618099, guid: 2b2a1263ca28b184a9d7985b03bf048a, type: 3}
+--- !u!65 &3849435562497853862
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 425022072686144865}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.5716, y: 0.8667, z: 10.5894}
+  m_Center: {x: 0.5849, y: -0.4461538, z: 0.18569994}
 --- !u!1 &547779320687184639
 GameObject:
   m_ObjectHideFlags: 0
@@ -23,7 +36,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 547779320687184626}
-  - component: {fileID: 547779320687184637}
+  - component: {fileID: 2593673098643778274}
   - component: {fileID: 547779320687184636}
   m_Layer: 0
   m_Name: HeartKeyInter
@@ -47,7 +60,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &547779320687184637
+--- !u!114 &2593673098643778274
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,7 +69,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 547779320687184639}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 411e9bf49f02d43428d9355301ead742, type: 3}
+  m_Script: {fileID: 11500000, guid: 30375dd1de3f17041b856f316f83d7bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: Key1

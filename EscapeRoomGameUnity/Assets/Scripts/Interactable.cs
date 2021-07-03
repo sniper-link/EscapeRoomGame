@@ -11,16 +11,14 @@ public class Interactable : MonoBehaviour
     public virtual void Interact(PlayerInteraction playerInteraction)
     {
         Debug.Log(objectName + ": print from interactable");
-        //storedObject.GetComponent<Container>();
-        // remove pickup object from their location
         if (storedObject.TryGetComponent<Lock>(out Lock testLock))
         {
             Debug.Log("Lol");
-            testLock.insertItem = null;
+            testLock.insertedItem = null;
         }
     }
 
-    public virtual void Inspect(PlayerInteraction playerInteraction)
+    public void Inspect(PlayerInteraction playerInteraction)
     {
         
     }
@@ -54,10 +52,20 @@ public class Interactable : MonoBehaviour
     {
         // Disable all of the colliders
         Collider[] colliders = GetComponents<Collider>();
+        Collider[] childColliders = GetComponentsInChildren<Collider>();
+
+
         foreach (Collider col in colliders)
         {
             col.enabled = false;
-        }    
+        }
+
+        foreach (Collider col in childColliders)
+        {
+            Debug.Log(col.name + " is disabled");
+            col.enabled = false;
+        }
+        this.enabled = false;
     }
 
     public virtual void RemoveFrom()

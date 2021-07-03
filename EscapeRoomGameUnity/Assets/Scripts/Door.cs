@@ -4,99 +4,34 @@ using UnityEngine;
 
 
 
-public class Door : Interactable
+public class Door : Unlockable
 {
     // Start is called before the first frame update
     public bool isOpen = false;
-    public bool canInteract = true;
+    public bool canInteract = false;
     public float timeToOpen = 1f;
-    public Interactable itemToUnlockWith;
-    public List<Lock> needLocks;
-    public List<Lock> completedLocks;
 
     void Start()
     {
         canPickup = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public override void Interact(PlayerInteraction playerInteraction)
     {
-        if (canInteract)
+        //                                              V maybe need this V
+        if (canInteract && requiredLocks.Count == 0 /*&& completedLocks.Count == 0*/)
         {
-            if (itemToUnlockWith == null)
-            {
-                if (!isOpen)
-                {
-                    Vector3 oldRotation = this.transform.eulerAngles;
-                    Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
-                    isOpen = true;
-                    canInteract = false;
-                    StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                }
-                else
-                {
-                    Vector3 oldRotation = this.transform.eulerAngles;
-                    Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y - 90, oldRotation.z);
-                    isOpen = false;
-                    canInteract = false;
-                    StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                }
-            }
-            else if (itemToUnlockWith != null)
-            {
-                playerInteraction.playerInventory.GetLeftHandItem(out Interactable leftHandItem);
-                playerInteraction.playerInventory.GetRightHandItem(out Interactable rightHandItem);
-                if (itemToUnlockWith == leftHandItem)
-                {
-                    itemToUnlockWith = null;
-                    Destroy(leftHandItem.gameObject);
-                    playerInteraction.playerInventory.RemoveLeftHandItem();
-                    Vector3 oldRotation = this.transform.eulerAngles;
-                    Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
-                    //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, newRotation, 1f);
-                    isOpen = true;
-                    canInteract = false;
-                    StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                    
-                }
-                else if (itemToUnlockWith == rightHandItem)
-                {
-                    itemToUnlockWith = null;
-                    Destroy(rightHandItem.gameObject);
-                    playerInteraction.playerInventory.RemoveRightHandItem();
-                    Vector3 oldRotation = this.transform.eulerAngles;
-                    Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + 90, oldRotation.z);
-                    //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, newRotation, 1f);
-                    isOpen = true;
-                    canInteract = false;
-                    StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
-                    
-                }
-                else
-                {
-                    Debug.Log("Can't unlock door");
-                }
-            }
+            Vector3 oldRotation = this.transform.eulerAngles;
+            Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + (isOpen ? -90 : 90), oldRotation.z);
+            isOpen = !isOpen;
+            canInteract = false;
+            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
         }
     }
 
-    public void UpdateDoorLocks(Lock targetLock)
+    public override void Open()
     {
-        if (needLocks.Contains(targetLock) && targetLock.isFinished)
-        {
-            needLocks.Remove(targetLock);
-            completedLocks.Add(targetLock);
-            if (needLocks.Count == 0)
-            {
-                OpenDoor();
-            }
-        }
+        OpenDoor();
     }
 
     public void OpenDoor()

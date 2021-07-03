@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         //Cursor.visible = false;
-        camCurX = player.transform.rotation.eulerAngles.y % 360;
+        //camCurX = player.transform.rotation.eulerAngles.y % 360;
     }
 
     private void Start()
@@ -41,8 +41,9 @@ public class CameraController : MonoBehaviour
             cameraMode = CameraMode.OutOfFocus;
         }
 
-        // when player pressed left click to re focus
-        if (Input.GetMouseButtonDown(2))
+        // when player pressed middle mouse button to re focus and can't re focuse
+        // while in inspect mode
+        if (Input.GetMouseButtonDown(2) && cameraMode != CameraMode.InspectMode)
         {
             cameraMode = CameraMode.PlayMode;
         }
@@ -56,7 +57,8 @@ public class CameraController : MonoBehaviour
         switch (cameraMode)
         { 
             case CameraMode.PlayMode:
-                camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed)) % 360;
+                camCurX = (camCurX + (mouseX * Time.deltaTime * rotateXSpeed));
+                camCurX = (camCurX + (camCurX < 0 ? 360 : 0)) % 360;
                 camCurY += (mouseY * Time.deltaTime * rotateYSpeed * -1);
                 break;
             case CameraMode.InspectMode:

@@ -48,7 +48,13 @@ public class PlayerInteraction : MonoBehaviour
                 if (targetItem != null)
                 {
                     //Debug.Log("looking at an interactable object");
+                    if (targetItem.TryGetComponent<Door>(out Door loll))
+                    {
+                        return;
+                    }
                 }
+
+                
 
             }
 
@@ -247,6 +253,8 @@ public class PlayerInteraction : MonoBehaviour
 
         curInspectItem.transform.parent = leftHandPos.transform;
         curInspectItem.transform.SetPositionAndRotation(leftHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+        curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // ^ might be overkill
         curInspectItem = null;
     }
 }

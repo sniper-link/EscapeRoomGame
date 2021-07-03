@@ -21,7 +21,7 @@ public class PlayerInventory : MonoBehaviour
             leftHandItem = targetItem;
             if (targetItem.storedObject != null && targetItem.storedObject.TryGetComponent<Lock>(out Lock testLock))
             {
-                testLock.insertItem = null;
+                testLock.insertedItem = null;
             }
 
             targetItem.GetComponent<Rigidbody>().isKinematic = true;
@@ -45,7 +45,7 @@ public class PlayerInventory : MonoBehaviour
             rightHandItem = targetItem;
             if (targetItem.storedObject != null && targetItem.storedObject.TryGetComponent<Lock>(out Lock testLock))
             {
-                testLock.insertItem = null;
+                testLock.insertedItem = null;
             }
 
             targetItem.GetComponent<Rigidbody>().isKinematic = true;
