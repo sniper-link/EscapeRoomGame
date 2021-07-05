@@ -9,12 +9,16 @@ public class PlayerUI : MonoBehaviour
     public GameObject rightHandMenu;
     public GameObject LMBIcon;
     public GameObject RMBIcon;
+    public GameObject leftHandHint;
+    public GameObject rightHandHint;
 
     private void Awake()
     {
         crosshairStuff.SetActive(false);
         leftHandMenu.SetActive(false);
         rightHandMenu.SetActive(false);
+        leftHandHint.SetActive(false);
+        rightHandHint.SetActive(false);
     }
     // UI Stuff
 
@@ -37,6 +41,18 @@ public class PlayerUI : MonoBehaviour
         else if (targetSide == Side.Right)
         {
             rightHandMenu.SetActive(newState);
+        }
+    }
+
+    public void ShowHandHint(Side targetSide, bool newState)
+    {
+        if (targetSide == Side.Left)
+        {
+            leftHandHint.SetActive(newState);
+        }
+        else if (targetSide == Side.Right)
+        {
+            rightHandHint.SetActive(newState);
         }
     }
 }

@@ -74,6 +74,7 @@ public class PlayerInteraction : MonoBehaviour
                         if (targetItem != null && targetItem.canPickup)
                         {
                             playerInventory.AddLeftHandItem(targetItem, leftHandPos, out bool addSuccess);
+                            playerUI.ShowHandHint(Side.Left, addSuccess);
                             /*if (addSuccess)
                             {
                                 targetItem.GetComponent<Rigidbody>().isKinematic = true;
@@ -93,6 +94,7 @@ public class PlayerInteraction : MonoBehaviour
                             if (dropSuccess)
                             {
                                 playerInventory.RemoveLeftHandItem();
+                                playerUI.ShowHandHint(Side.Left, false);
                             }
                             // ray cast to the ground and if there is space, put the item there
                             /*Ray itemDropDis = new Ray(leftHandPos.transform.position, transform.up * -1);
@@ -116,6 +118,7 @@ public class PlayerInteraction : MonoBehaviour
                                 if (useSuccess)
                                 {
                                     playerInventory.RemoveLeftHandItem();
+                                    playerUI.ShowHandHint(Side.Left, false);
                                 }
                                 return;
                             }
@@ -144,6 +147,7 @@ public class PlayerInteraction : MonoBehaviour
                         if (targetItem != null && targetItem.canPickup)
                         {
                             playerInventory.AddRightHandItem(targetItem, rightHandPos, out bool addSuccess);
+                            playerUI.ShowHandHint(Side.Right, addSuccess);
                             /*if (addSuccess)
                             {
                                 targetItem.GetComponent<Rigidbody>().isKinematic = true;
@@ -158,10 +162,11 @@ public class PlayerInteraction : MonoBehaviour
                         playerUI.ShowHandMenu(Side.Right, itemRef != null);
                         if (Input.GetKeyDown("q"))
                         {
-                            itemRef.DropItem(leftHandPos, out bool dropSuccess);
+                            itemRef.DropItem(rightHandPos, out bool dropSuccess);
                             if (dropSuccess)
                             {
-                                playerInventory.RemoveLeftHandItem();
+                                playerInventory.RemoveRightHandItem();
+                                playerUI.ShowHandHint(Side.Right, false);
                             }
                             // ray cast to the ground and if there is space, put the item there
                             /*Ray itemDropDis = new Ray(rightHandPos.transform.position, transform.up * -1);
@@ -185,6 +190,7 @@ public class PlayerInteraction : MonoBehaviour
                                 if (useSuccess)
                                 {
                                     playerInventory.RemoveLeftHandItem();
+                                    playerUI.ShowHandHint(Side.Right, false);
                                 }
                             }
                         }
