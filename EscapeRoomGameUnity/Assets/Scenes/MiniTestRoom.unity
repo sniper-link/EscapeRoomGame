@@ -1793,17 +1793,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c06c7d50f85d2ee4490c5c93baaa5d6d, type: 3}
   m_PrefabInstance: {fileID: 223795009}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &226208405 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1421218595, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
-  m_PrefabInstance: {fileID: 1873077137}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5a932521325bf4da13dffb90b24e2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &231898607 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff8e9b25690cd2243a48cfefc443233e, type: 3}
@@ -10640,6 +10629,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3758767592748952608, guid: f664f637c85bff445b49f39bd8a22260, type: 3}
+      propertyPath: rotateXSpeed
+      value: 300
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f664f637c85bff445b49f39bd8a22260, type: 3}
 --- !u!1 &1527915124 stripped
@@ -12866,17 +12859,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 1925317332}
     m_Modifications:
     - target: {fileID: 1421218595, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
-      propertyPath: key
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1421218595, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
       propertyPath: targetKey
       value: 
       objectReference: {fileID: 2037218384}
-    - target: {fileID: 1711813855319927140, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: e93c5345693029040b7508a1ed5b969c, type: 2}
     - target: {fileID: 8149876051500369540, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -12921,14 +12906,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8543491684168874723, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
-      propertyPath: requiredLocks.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8543491684168874723, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
-      propertyPath: requiredLocks.Array.data[0]
-      value: 
-      objectReference: {fileID: 226208405}
     - target: {fileID: 8814104922650106942, guid: 38fb327595c040743ad09474f14ca61e, type: 3}
       propertyPath: m_Name
       value: Door1

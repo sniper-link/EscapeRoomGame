@@ -22,7 +22,9 @@ public class PlayerInteraction : MonoBehaviour
     public float tossForce = 100;
     public float playerVisionDis = 2;
     public float timeBetweenAction = 0f;
-    
+    Interactable targetItem = null;
+    Side inspectSide = Side.Both;
+
     private void Awake()
     {
         // use this to check for stuff
@@ -38,7 +40,6 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (cameraController.cameraMode == CameraMode.PlayMode)
         {
-            Interactable targetItem = null;
             Ray playerVision = new Ray(cameraController.playerCamera.transform.position, cameraController.playerCamera.transform.forward);
             RaycastHit playerVisionEnd;
 
@@ -50,77 +51,109 @@ public class PlayerInteraction : MonoBehaviour
                     //Debug.Log("looking at an interactable object");
                     if (targetItem.TryGetComponent<Door>(out Door loll))
                     {
-                        return;
+                        targetItem = null;
                     }
                 }
-
-                
-
             }
 
-            playerUI.ShowMBAction(targetItem != null);
+            playerUI.ShowMBAction(targetItem != null, (targetItem != null ? targetItem.objectName : ""));
 
-
+            playerInventory.GetInventoryItem(out Interactable leftHandItemRef, out Interactable rightHandItemRef);
             // left side will always be first
             {
                 // TO::DO add a cooldown between pick ups
                 
                 if (Input.GetMouseButton(0))
                 {
-                    playerInventory.GetLeftHandItem(out Interactable itemRef);
-                    
-                    if (itemRef == null)
+                    if (leftHandItemRef != null)
+                    {
+                        playerUI.ShowHandMenu(Side.Left, leftHandItemRef != null);
+                        if (Input.GetKeyDown("q"))
+                        {
+                            leftHandItemRef.DropItem(leftHandPos, out bool dropSuccess);
+                            if (dropSuccess)
+                            {
+                                playerInventory.RemoveLeftHandItem();
+                                playerUI.ShowHandUI(Side.Left, false);
+                            }
+                        }
+                        if (Input.GetKeyDown("e"))
+                        {
+                            if (targetItem != null)
+                            {
+                                targetItem.Use(leftHandItemRef, out bool useSuccess);
+                                if (useSuccess)
+                                {
+                                    playerInventory.RemoveLeftHandItem();
+                                    playerUI.ShowHandUI(Side.Left, false);
+                                }
+                                return;
+                            }
+                            else
+                            {
+                                // don't give the player the use option
+                                //Debug.Log("Can't use the current hand item with anything");
+                                UpdateHelpText("Can't use the current hand item with anything");
+                            }
+                        }
+                        if (Input.GetKeyDown("f"))
+                        {
+                            Debug.Log("Inspecting Mode");
+                            if (curInspectItem == null)
+                            {
+                                playerUI.ShowHandMenu(Side.Both, false);
+                                inspectSide = Side.Left;
+                                InspectObject(leftHandItemRef);
+                            }
+                        }
+                    }
+                }
+                
+                // LMB pickup events
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (leftHandItemRef == null)
                     {
                         if (targetItem != null && targetItem.canPickup)
                         {
                             playerInventory.AddLeftHandItem(targetItem, leftHandPos, out bool addSuccess);
                             playerUI.ShowHandHint(Side.Left, addSuccess);
-                            /*if (addSuccess)
-                            {
-                                targetItem.GetComponent<Rigidbody>().isKinematic = true;
-                                targetItem.transform.parent = leftHandPos;
-                                targetItem.transform.localPosition = new Vector3(0, 0, 0);
-                                targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                                // TO::DO add animation for raising hand
-                            }*/
                         }
                     }
-                    else
+                }
+
+                // right clicks
+                if (Input.GetMouseButton(1))
+                {
+                    if (rightHandItemRef != null)
                     {
-                        playerUI.ShowHandMenu(Side.Left, itemRef != null);
+                        playerUI.ShowHandMenu(Side.Right, rightHandItemRef != null);
                         if (Input.GetKeyDown("q"))
                         {
-                            itemRef.DropItem(leftHandPos, out bool dropSuccess);
+                            rightHandItemRef.DropItem(rightHandPos, out bool dropSuccess);
                             if (dropSuccess)
                             {
-                                playerInventory.RemoveLeftHandItem();
-                                playerUI.ShowHandHint(Side.Left, false);
+                                playerInventory.RemoveRightHandItem();
+                                playerUI.ShowHandUI(Side.Right, false);
                             }
-                            // ray cast to the ground and if there is space, put the item there
-                            /*Ray itemDropDis = new Ray(leftHandPos.transform.position, transform.up * -1);
-                            RaycastHit itemDropEnd;
-                            if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
-                            {
-                                itemRef.transform.parent = null;
-                                itemRef.transform.position = itemDropEnd.point;
-                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                                playerInventory.RemoveLeftHandItem();
-                            }*/
                         }
                         if (Input.GetKeyDown("e"))
                         {
                             if (targetItem != null)
                             {
-                                targetItem.Use(itemRef, out bool useSuccess);
-                                /*(itemRef.transform.parent = targetItem.transform;
-                                itemRef.transform.localPosition = new Vector3(0, 0, 0);
-                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);*/
+                                targetItem.Use(rightHandItemRef, out bool useSuccess);
                                 if (useSuccess)
                                 {
-                                    playerInventory.RemoveLeftHandItem();
-                                    playerUI.ShowHandHint(Side.Left, false);
+                                    playerInventory.RemoveRightHandItem();
+                                    playerUI.ShowHandUI(Side.Right, false);
                                 }
                                 return;
+                            }
+                            else
+                            {
+                                // don't give the player the use option
+                                //Debug.Log("Can't use the current hand item with anything");
+                                UpdateHelpText("Can't use the current hand item with anything");
                             }
                         }
                         if (Input.GetKeyDown("f"))
@@ -128,107 +161,37 @@ public class PlayerInteraction : MonoBehaviour
                             Debug.Log("Inspecting Mode");
                             if (curInspectItem == null)
                             {
-                                InspectObject(itemRef);
+                                playerUI.ShowHandMenu(Side.Both, false);
+                                inspectSide = Side.Right;
+                                InspectObject(rightHandItemRef);
                             }
                         }
                     }
                 }
-                else if (Input.GetMouseButtonUp(0))
+   
+                if (Input.GetMouseButtonDown(1))
                 {
-                    playerUI.ShowHandMenu(Side.Left, false);
-                }
-
-                if (Input.GetMouseButton(1))
-                {
-                    playerInventory.GetRightHandItem(out Interactable itemRef);
-                    
-                    if (itemRef == null)
+                    if (rightHandItemRef == null)
                     {
                         if (targetItem != null && targetItem.canPickup)
                         {
                             playerInventory.AddRightHandItem(targetItem, rightHandPos, out bool addSuccess);
                             playerUI.ShowHandHint(Side.Right, addSuccess);
-                            /*if (addSuccess)
-                            {
-                                targetItem.GetComponent<Rigidbody>().isKinematic = true;
-                                targetItem.transform.parent = rightHandPos;
-                                targetItem.transform.localPosition = new Vector3(0, 0, 0);
-                                targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                            }*/
                         }
                     }
-                    else
-                    {
-                        playerUI.ShowHandMenu(Side.Right, itemRef != null);
-                        if (Input.GetKeyDown("q"))
-                        {
-                            itemRef.DropItem(rightHandPos, out bool dropSuccess);
-                            if (dropSuccess)
-                            {
-                                playerInventory.RemoveRightHandItem();
-                                playerUI.ShowHandHint(Side.Right, false);
-                            }
-                            // ray cast to the ground and if there is space, put the item there
-                            /*Ray itemDropDis = new Ray(rightHandPos.transform.position, transform.up * -1);
-                            RaycastHit itemDropEnd;
-                            if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
-                            {
-                                itemRef.transform.parent = null;
-                                itemRef.transform.position = itemDropEnd.point;
-                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                                playerInventory.RemoveRightHandItem();
-                            }*/
-                        }
-                        if (Input.GetKeyDown("e"))
-                        {
-                            if (targetItem != null)
-                            {
-                                targetItem.Use(itemRef, out bool useSuccess);
-                                /*(itemRef.transform.parent = targetItem.transform;
-                                itemRef.transform.localPosition = new Vector3(0, 0, 0);
-                                itemRef.transform.localRotation = Quaternion.Euler(0, 0, 0);*/
-                                if (useSuccess)
-                                {
-                                    playerInventory.RemoveLeftHandItem();
-                                    playerUI.ShowHandHint(Side.Right, false);
-                                }
-                            }
-                        }
-                        if (Input.GetKeyDown("f"))
-                        {
-                            Debug.Log("Inspecting Mode");
-                            if (curInspectItem == null)
-                            {
-                                InspectObject(itemRef);
-                            }
+                }
 
-                        }
-                    }
-                }
-                else if (Input.GetMouseButtonUp(1))
-                {
-                    //playerUI.ShowLeftHandMenu(false);
-                    playerUI.ShowHandMenu(Side.Right, false);
-                }
+                playerUI.ShowHandMenu(Side.Left, Input.GetMouseButton(0) && leftHandItemRef != null);
+                playerUI.ShowHandMenu(Side.Right, Input.GetMouseButton(1) && rightHandItemRef != null);
             }
 
             if (Input.GetKeyDown("e") && targetItem != null)
             {
                 targetItem.Interact(this);
             }
-
-            /*if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
-            {
-                playerUI.ShowHandMenu(Side.Left, Input.GetMouseButton(0));
-                playerUI.ShowHandMenu(Side.Right, Input.GetMouseButton(1));
-
-
-            }*/
-
         }
         else if (cameraController.cameraMode == CameraMode.InspectMode)
         {
-            //playerInventory.GetLeftHandItem(out Interactable itemRef);
             if (Input.GetKeyDown("f"))
             {
                 StopInspectObject();
@@ -241,14 +204,18 @@ public class PlayerInteraction : MonoBehaviour
             Vector3 oldRot = curInspectItem.transform.rotation.eulerAngles;
             curInspectItem.transform.rotation = Quaternion.Euler(oldRot + new Vector3(mouseY, -mouseX, 0f));
         }
+
+        targetItem = null;
     }
 
     public void InspectObject(Interactable targetItem)
     {
+        playerUI.ShowHandMenu(Side.Both, false);
         curInspectItem = targetItem;
         cameraController.UpdateCameraMode(CameraMode.InspectMode);
         targetItem.transform.parent = inspectPos;
         targetItem.transform.SetPositionAndRotation(inspectPos.position, Quaternion.Euler(0, 0, 0));
+        curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
 
     public void StopInspectObject()
@@ -257,10 +224,30 @@ public class PlayerInteraction : MonoBehaviour
         Debug.Log("Quit Inspect Mode");
         cameraController.UpdateCameraMode(CameraMode.PlayMode);
 
-        curInspectItem.transform.parent = leftHandPos.transform;
-        curInspectItem.transform.SetPositionAndRotation(leftHandPos.transform.position, Quaternion.Euler(0, 0, 0));
-        curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        // ^ might be overkill
+        if (inspectSide == Side.Left)
+        {
+            curInspectItem.transform.parent = leftHandPos.transform;
+            curInspectItem.transform.SetPositionAndRotation(leftHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+            curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            // ^ might be overkill
+        }
+        else if (inspectSide == Side.Right)
+        {
+            curInspectItem.transform.parent = rightHandPos.transform;
+            curInspectItem.transform.SetPositionAndRotation(rightHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+            curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            // ^ might be overkill
+        }
+        else
+        {
+            Debug.LogWarning("Player Interaction is having trouble with inspect side");
+        }
+        
         curInspectItem = null;
+    }
+
+    public void UpdateHelpText(string newInfoText)
+    {
+        playerUI.UpdateHelpText(newInfoText);
     }
 }

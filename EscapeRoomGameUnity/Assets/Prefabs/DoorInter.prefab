@@ -27,9 +27,111 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Egg
   canPickup: 0
+  storedObject: {fileID: 0}
   targetDoor: {fileID: 8543491684168874723}
-  key: {fileID: 0}
-  insertItem: {fileID: 0}
+  targetUnlockable: {fileID: 0}
+  targetKey: {fileID: 0}
+  insertedItem: {fileID: 0}
+  isLocked: 1
+  unlockedAudio: {fileID: 8300000, guid: 8f0a093a146318d4b8dc700a866b0282, type: 3}
+  lockedAudio: {fileID: 8300000, guid: d49107ff28a17d744923b00bb98ae3b6, type: 3}
+  playSource: {fileID: 1679674799}
+--- !u!82 &1679674799
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147632048305}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8814104922650106942
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,11 +230,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Door
   canPickup: 1
+  storedObject: {fileID: 0}
+  requiredLocks:
+  - {fileID: 1421218595}
+  completedLocks: []
   isOpen: 0
   canInteract: 0
   timeToOpen: 1
-  itemToUnlockWith: {fileID: 0}
-  typeOfDoor: 0
 --- !u!65 &8543491684168874727
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -212,7 +316,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 24787d2e8ec60594b97de1d5c6cad3d4, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 859bd102f2359f841b339ff9d223867f, type: 2}
+      objectReference: {fileID: 2100000, guid: e93c5345693029040b7508a1ed5b969c, type: 2}
     - target: {fileID: 919132149155446097, guid: 24787d2e8ec60594b97de1d5c6cad3d4, type: 3}
       propertyPath: m_Name
       value: Door Handle

@@ -99,6 +99,18 @@ public class PlayerInventory : MonoBehaviour
         rightHandItem = null;
     }
 
+    public void RemoveItem(Side side)
+    {
+        if (side == Side.Left)
+            leftHandItem = null;
+        else if (side == Side.Right)
+            rightHandItem = null;
+        else if (side == Side.Both)
+        {
+            leftHandItem = (rightHandItem = null);
+        }
+    }
+
     public void GetLeftHandItem(out Interactable itemRef)
     {
         itemRef = this.leftHandItem;
@@ -107,5 +119,11 @@ public class PlayerInventory : MonoBehaviour
     public void GetRightHandItem(out Interactable itemRef)
     {
         itemRef = this.rightHandItem;
+    }
+
+    public void GetInventoryItem(out Interactable leftHandItemRef, out Interactable rightHandItemRef)
+    {
+        leftHandItemRef = this.leftHandItem;
+        rightHandItemRef = this.rightHandItem;
     }
 }

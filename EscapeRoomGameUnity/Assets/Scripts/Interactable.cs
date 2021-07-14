@@ -35,7 +35,7 @@ public class Interactable : MonoBehaviour
     public void DropItem(Transform startLoc, out bool dropSuccess)
     {
         // ray cast to the ground and if there is space, put the item there
-        Ray itemDropDis = new Ray(startLoc.position, transform.up * -1);
+        Ray itemDropDis = new Ray(transform.position, new Vector3(0, -1, 0));
         RaycastHit itemDropEnd;
         dropSuccess = false;
         if (Physics.Raycast(itemDropDis, out itemDropEnd, 10))
@@ -46,6 +46,8 @@ public class Interactable : MonoBehaviour
             dropSuccess = true;
             //playerInventory.RemoveLeftHandItem();
         }
+
+        // TO::DO add a way to let the player place items on certain interactables
     }
 
     public void DisableItem()
@@ -62,7 +64,7 @@ public class Interactable : MonoBehaviour
 
         foreach (Collider col in childColliders)
         {
-            Debug.Log(col.name + " is disabled");
+            //Debug.Log(col.name + " is disabled");
             col.enabled = false;
         }
         this.enabled = false;

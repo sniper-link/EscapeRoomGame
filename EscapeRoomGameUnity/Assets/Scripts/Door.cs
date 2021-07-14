@@ -25,7 +25,7 @@ public class Door : Unlockable
             Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + (isOpen ? -90 : 90), oldRotation.z);
             isOpen = !isOpen;
             canInteract = false;
-            StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
+            //StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
         }
     }
 

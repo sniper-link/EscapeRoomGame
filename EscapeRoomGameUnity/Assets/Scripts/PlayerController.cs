@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public CameraController cameraController;
     public CharacterController charController;
     public Transform playerCameraPos;
     public bool isCrouching = false;
@@ -25,63 +26,68 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // get player axis controls
-        float forwardMovement = Input.GetAxis("Vertical");
-        float rightMovement = Input.GetAxis("Horizontal");
-
-        // get player current facing direction
-        Vector3 forwardDir = this.transform.forward;
-        Vector3 rightDir = this.transform.right * -1;
-
-        // construct new move direction
-        Vector3 moveDirection = new Vector3();
-
-        moveDirection.x = -((forwardDir.x * rightMovement) + (rightDir.x * forwardMovement));
-        moveDirection.z = -((forwardDir.z * rightMovement) + (rightDir.z * forwardMovement));
-        
-
-        if (!charController.isGrounded)
+        if (cameraController.cameraMode == CameraMode.PlayMode)
         {
-            moveDirection.y = -0.9f;
-        }
+            // get player axis controls
+            float forwardMovement = Input.GetAxis("Vertical");
+            float rightMovement = Input.GetAxis("Horizontal");
 
-        moveDirection *= playerMoveSpeed * Time.deltaTime;
+            // get player current facing direction
+            Vector3 forwardDir = this.transform.forward;
+            Vector3 rightDir = this.transform.right * -1;
 
-        // move the player
-        charController.Move(moveDirection);
+            // construct new move direction
+            Vector3 moveDirection = new Vector3();
 
-        if (Input.GetKeyDown("left ctrl"))
-        {
-            if (isCrouching)
+            moveDirection.x = -((forwardDir.x * rightMovement) + (rightDir.x * forwardMovement));
+            moveDirection.z = -((forwardDir.z * rightMovement) + (rightDir.z * forwardMovement));
+
+
+            if (!charController.isGrounded)
             {
-                // TO::DO need to add a check to see if the player can stand up
-                /*
-                Collider[] capTest = Physics.OverlapSphere(transform.position + new Vector3(0, 1.5f, 0), 0.5f);
-                if (capTest.Length > 0)
+                moveDirection.y = -0.9f;
+            }
+
+            moveDirection *= playerMoveSpeed * Time.deltaTime;
+
+            // move the player
+            charController.Move(moveDirection);
+
+            if (Input.GetKeyDown("left ctrl"))
+            {
+                if (isCrouching)
                 {
-                    Debug.Log("There is something in the way");
-                    foreach(Collider cap in capTest)
+                    // TO::DO need to add a check to see if the player can stand up
+                    /*
+                    Collider[] capTest = Physics.OverlapSphere(transform.position + new Vector3(0, 1.5f, 0), 0.5f);
+                    if (capTest.Length > 0)
                     {
-                        Debug.Log(cap.name);
+                        Debug.Log("There is something in the way");
+                        foreach(Collider cap in capTest)
+                        {
+                            Debug.Log(cap.name);
+                        }
                     }
+                    else
+                    {
+                        Debug.Log("Can Stand up");
+                    }*/
+
+                    charController.height = playerHeight;
+                    charController.center = new Vector3(0, playerHeight / 2, 0);
+                    playerCameraPos.localPosition = new Vector3(0, playerHeight - cameraDiff, 0);
+                    isCrouching = !isCrouching;
                 }
                 else
                 {
-                    Debug.Log("Can Stand up");
-                }*/
-
-                charController.height = playerHeight;
-                charController.center = new Vector3(0, playerHeight / 2, 0);
-                playerCameraPos.localPosition = new Vector3(0, playerHeight - cameraDiff, 0);
-                isCrouching = !isCrouching;
-            }
-            else
-            {
-                charController.height = playerHeight/2;
-                charController.center = new Vector3(0, playerHeight / 4, 0);
-                playerCameraPos.localPosition = new Vector3(0, playerHeight/2 - cameraDiff, 0);
-                isCrouching = !isCrouching;
+                    charController.height = playerHeight / 2;
+                    charController.center = new Vector3(0, playerHeight / 4, 0);
+                    playerCameraPos.localPosition = new Vector3(0, playerHeight / 2 - cameraDiff, 0);
+                    isCrouching = !isCrouching;
+                }
             }
         }
+            
+        
     }
 }

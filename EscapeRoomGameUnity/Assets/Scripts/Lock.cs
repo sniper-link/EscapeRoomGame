@@ -9,6 +9,9 @@ public class Lock : Interactable
     public Key targetKey;
     public Key insertedItem;
     public bool isLocked = true;
+    public AudioClip unlockedAudio;
+    public AudioClip lockedAudio;
+    public AudioSource playSource;
 
     // TO::DO add key variables instead of Interactable variable
 
@@ -25,7 +28,7 @@ public class Lock : Interactable
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
-        if (insertedItem == targetKey)
+        /*if (insertedItem == targetKey)
         {
             Debug.Log("The correct key was used");
             insertedItem.transform.Rotate(new Vector3(0, 0, 90), Space.Self);
@@ -39,11 +42,21 @@ public class Lock : Interactable
         else if (insertedItem == null)
         {
             Debug.Log("need to insert a key into the lock");
+            playSource.clip = lockedAudio;
+            playSource.Play();
         }
         else
         {
             Debug.Log("Wrong key was used, please try another key");
-        }
+            playSource.clip = lockedAudio;
+            playSource.Play();
+        }*/
+        if (this.isLocked)
+            playerInteraction.UpdateHelpText(name + " is currently LOCKED");
+            //Debug.Log(name + " is currently locked");
+        else
+            playerInteraction.UpdateHelpText(name + " is UNLOCKED");
+            //Debug.Log(name + " is currently unlocked");
     }
 
     public override void Use(Interactable targetItem, out bool useSuccess)
@@ -51,14 +64,40 @@ public class Lock : Interactable
         // player will insert the keys they picked up into the lock
         if (targetItem != null && insertedItem == null)
         {
-            if (targetItem.TryGetComponent<Key>(out Key targetKey))
+            if (targetItem.TryGetComponent<Key>(out Key targetKeySpec))
             {
-                insertedItem = targetKey;
-                targetKey.storedObject = this;
+                insertedItem = targetKeySpec;
+                targetKeySpec.storedObject = this;
                 useSuccess = true;
                 targetItem.transform.parent = this.transform;
                 targetItem.transform.localPosition = new Vector3(0, 0, 0);
                 targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                if (insertedItem == targetKey)
+                {
+                    //Debug.Log("The correct key was used");
+                    insertedItem.transform.Rotate(new Vector3(0, 0, 90), Space.Self);
+                    insertedItem.DisableItem();
+                    StartCoroutine(DestroyKeyAfter());
+                    this.isLocked = false;
+                    playSource.clip = unlockedAudio;
+                    playSource.Play();                    
+                    // open door
+                    targetDoor.UpdateLocks(this);
+                    // prevent further interaction
+                    this.DisableItem();
+                }
+                else if (insertedItem == null)
+                {
+                    //Debug.Log("need to insert a key into the lock");
+                    playSource.clip = lockedAudio;
+                    playSource.Play();
+                }
+                else
+                {
+                    //Debug.Log("Wrong key was used, please try another key");
+                    playSource.clip = lockedAudio;
+                    playSource.Play();
+                }
                 return;
             }
         }
@@ -69,5 +108,29 @@ public class Lock : Interactable
     public bool IsLocked()
     {
         return this.isLocked;
+    }
+
+    public bool CheckIfCorrectItemInserted()
+    {
+        return false;
+    }
+
+    IEnumerator DestroyKeyAfter()
+    {
+        yield return new WaitForSeconds(1);
+        Destroy(insertedItem.gameObject);
+    }
+
+    IEnumerator MovingKey(Quaternion a, Quaternion b, float curTime)
+    {
+        // move the key to the slot of the door handle
+        // when done, call the turning key 
+        yield return 0;
+    }
+
+    IEnumerator TurningKey(Quaternion a, Quaternion b, float curTime)
+    {
+        // turns the key when its inserted
+        yield return 0;
     }
 }

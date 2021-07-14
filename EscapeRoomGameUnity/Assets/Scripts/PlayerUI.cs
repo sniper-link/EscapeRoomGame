@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerUI : MonoBehaviour
     public GameObject RMBIcon;
     public GameObject leftHandHint;
     public GameObject rightHandHint;
+    public Text nameText;
+    public Text infoText;
 
     private void Awake()
     {
@@ -20,10 +23,11 @@ public class PlayerUI : MonoBehaviour
         leftHandHint.SetActive(false);
         rightHandHint.SetActive(false);
     }
-    // UI Stuff
 
-    public void ShowMBAction(bool newState)
+    // UI Stuff
+    public void ShowMBAction(bool newState, string nameOfItem)
     {
+        nameText.text = nameOfItem;
         crosshairStuff.SetActive(newState);
     }
 
@@ -42,6 +46,12 @@ public class PlayerUI : MonoBehaviour
         {
             rightHandMenu.SetActive(newState);
         }
+        else if (targetSide == Side.Both)
+        {
+            Debug.Log("bot");
+            leftHandMenu.SetActive(newState);
+            rightHandMenu.SetActive(newState);
+        }
     }
 
     public void ShowHandHint(Side targetSide, bool newState)
@@ -54,5 +64,23 @@ public class PlayerUI : MonoBehaviour
         {
             rightHandHint.SetActive(newState);
         }
+    }
+
+    public void ShowHandUI(Side targetSide, bool newState)
+    {
+        ShowHandHint(targetSide, newState);
+        ShowHandMenu(targetSide, newState);
+    }
+
+    public void UpdateHelpText(string helpText)
+    {
+        infoText.text = helpText;
+        StartCoroutine(DisappearText(2));
+    }
+
+    IEnumerator DisappearText(float timeToWait)
+    {
+        yield return new WaitForSeconds(timeToWait);
+        infoText.text = "";
     }
 }

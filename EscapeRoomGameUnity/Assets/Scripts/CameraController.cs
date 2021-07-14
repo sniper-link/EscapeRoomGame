@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
     {
         // TO::DO check if this check should be here or player interaction
         // when player pressed the escape to go into the ui
-        if (Input.GetKeyDown("escape"))
+        if (Input.GetKeyDown("escape") && cameraMode != CameraMode.InspectMode)
         {
             cameraMode = CameraMode.OutOfFocus;
         }
