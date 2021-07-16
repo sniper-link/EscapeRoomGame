@@ -48,7 +48,6 @@ public class PlayerUI : MonoBehaviour
         }
         else if (targetSide == Side.Both)
         {
-            Debug.Log("bot");
             leftHandMenu.SetActive(newState);
             rightHandMenu.SetActive(newState);
         }
@@ -62,6 +61,11 @@ public class PlayerUI : MonoBehaviour
         }
         else if (targetSide == Side.Right)
         {
+            rightHandHint.SetActive(newState);
+        }
+        else if (targetSide == Side.Both)
+        {
+            leftHandHint.SetActive(newState);
             rightHandHint.SetActive(newState);
         }
     }

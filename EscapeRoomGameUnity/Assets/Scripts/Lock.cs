@@ -28,29 +28,6 @@ public class Lock : Interactable
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
-        /*if (insertedItem == targetKey)
-        {
-            Debug.Log("The correct key was used");
-            insertedItem.transform.Rotate(new Vector3(0, 0, 90), Space.Self);
-            insertedItem.DisableItem();
-            this.isLocked = false;
-            // open door
-            targetDoor.UpdateLocks(this);
-            // prevent further interaction
-            this.DisableItem();
-        }
-        else if (insertedItem == null)
-        {
-            Debug.Log("need to insert a key into the lock");
-            playSource.clip = lockedAudio;
-            playSource.Play();
-        }
-        else
-        {
-            Debug.Log("Wrong key was used, please try another key");
-            playSource.clip = lockedAudio;
-            playSource.Play();
-        }*/
         if (this.isLocked)
             playerInteraction.UpdateHelpText(name + " is currently LOCKED");
             //Debug.Log(name + " is currently locked");
@@ -121,6 +98,7 @@ public class Lock : Interactable
         Destroy(insertedItem.gameObject);
     }
 
+    // currently not in use
     IEnumerator MovingKey(Quaternion a, Quaternion b, float curTime)
     {
         // move the key to the slot of the door handle
@@ -128,6 +106,7 @@ public class Lock : Interactable
         yield return 0;
     }
 
+    // currently not in use
     IEnumerator TurningKey(Quaternion a, Quaternion b, float curTime)
     {
         // turns the key when its inserted
