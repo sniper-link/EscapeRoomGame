@@ -18,6 +18,7 @@ public class PlayerInteraction : MonoBehaviour
     public Transform rightHandPos;
     public Transform twoHandPos;
     public Transform inspectPos;
+    public Transform dofEffect;
     public Interactable curInspectItem;
     public float tossForce = 100;
     public float playerVisionDis = 2;
@@ -101,6 +102,7 @@ public class PlayerInteraction : MonoBehaviour
                         if (Input.GetKeyDown("f"))
                         {
                             Debug.Log("Inspecting Mode");
+                            dofEffect.gameObject.SetActive(true);
                             if (curInspectItem == null)
                             {
                                 playerUI.ShowHandMenu(Side.Both, false);
@@ -209,12 +211,15 @@ public class PlayerInteraction : MonoBehaviour
             if (Input.GetKeyDown("f"))
             {
                 StopInspectObject();
+                dofEffect.gameObject.SetActive(false);
                 return;
             }
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
 
             // TO::DO need to add rotation to the inspected objects base on the camera
+            //Sets the Layer of the inspected object to "DoF" to only be rendered by the overlay camera
+            curInspectItem.gameObject.layer = 7;
             Vector3 oldRot = curInspectItem.transform.rotation.eulerAngles;
             curInspectItem.transform.rotation = Quaternion.Euler(oldRot + new Vector3(mouseY, -mouseX, 0f));
         }
