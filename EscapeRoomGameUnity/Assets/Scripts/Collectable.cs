@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class Collectable : Interactable
 {
-    public enum ObjectType
-    {
-        PAGE
-    }
-
     public ObjectType objectType;
     public ScriptableObject data;
 
@@ -26,13 +21,7 @@ public class Collectable : Interactable
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
-        Debug.Log("Interacted");
-        switch (objectType)
-        {
-            case ObjectType.PAGE: GameObject.FindGameObjectWithTag("Book").GetComponent<Book>().AddItemToList(data);
-                break;
-            default: 
-                break;
-        }
+        Debug.Log("Interacted with Collectable");
+        GameObject.Destroy(gameObject);
     }
 }

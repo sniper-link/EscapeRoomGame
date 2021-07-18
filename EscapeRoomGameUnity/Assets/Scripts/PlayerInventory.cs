@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-
+    public Storage storage = new Storage();
     // used to hold items players pickup
     // player will only be able to hold up to 
     // two-space worth of items at a time
@@ -126,4 +126,6 @@ public class PlayerInventory : MonoBehaviour
         leftHandItemRef = this.leftHandItem;
         rightHandItemRef = this.rightHandItem;
     }
+
+    
 }

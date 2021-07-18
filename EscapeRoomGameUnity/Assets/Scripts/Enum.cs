@@ -20,3 +20,9 @@ enum TypeOfDoor
     Combination = 2,
     Activatiable = 3
 }
+
+public enum ObjectType
+{
+    PAGE,
+    RUNE
+}

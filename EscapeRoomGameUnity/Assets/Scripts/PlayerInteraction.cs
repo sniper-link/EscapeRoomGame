@@ -45,7 +45,9 @@ public class PlayerInteraction : MonoBehaviour
 
             if (Physics.Raycast(playerVision, out playerVisionEnd, playerVisionDis))
             {
+                targetItem = playerVisionEnd.collider.GetComponentInParent<Collectable>();
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
+                
                 if (targetItem != null)
                 {
                     //Debug.Log("looking at an interactable object");
@@ -112,12 +114,18 @@ public class PlayerInteraction : MonoBehaviour
                 // LMB pickup events
                 if (Input.GetMouseButtonDown(0))
                 {
+
                     if (leftHandItemRef == null)
                     {
                         if (targetItem != null && targetItem.canPickup)
                         {
                             playerInventory.AddLeftHandItem(targetItem, leftHandPos, out bool addSuccess);
                             playerUI.ShowHandHint(Side.Left, addSuccess);
+                        }
+                        else if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
+                        {
+                            playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
+                            collectable.Interact(this);
                         }
                     }
                 }
@@ -178,6 +186,11 @@ public class PlayerInteraction : MonoBehaviour
                             playerInventory.AddRightHandItem(targetItem, rightHandPos, out bool addSuccess);
                             playerUI.ShowHandHint(Side.Right, addSuccess);
                         }
+                        else if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
+                        {
+                            playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
+                            collectable.Interact(this);
+                        }
                     }
                 }
 
@@ -206,6 +219,11 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         targetItem = null;
+
+        if (Input.GetKeyDown("b"))
+        {
+            playerInventory.storage.OutputStorage();
+        }
     }
 
     public void InspectObject(Interactable targetItem)
