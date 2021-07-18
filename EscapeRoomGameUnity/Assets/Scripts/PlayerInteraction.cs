@@ -18,7 +18,8 @@ public class PlayerInteraction : MonoBehaviour
     public Transform rightHandPos;
     public Transform twoHandPos;
     public Transform inspectPos;
-    public Transform dofEffect;
+    public GameObject dofEffect;
+    public GameObject inspectCamera;
     public Interactable curInspectItem;
     public float tossForce = 100;
     public float playerVisionDis = 2;
@@ -102,7 +103,8 @@ public class PlayerInteraction : MonoBehaviour
                         if (Input.GetKeyDown("f"))
                         {
                             Debug.Log("Inspecting Mode");
-                            dofEffect.gameObject.SetActive(true);
+                            dofEffect.SetActive(true);
+                            inspectCamera.SetActive(true);
                             if (curInspectItem == null)
                             {
                                 playerUI.ShowHandMenu(Side.Both, false);
@@ -169,6 +171,9 @@ public class PlayerInteraction : MonoBehaviour
                         if (Input.GetKeyDown("f"))
                         {
                             Debug.Log("Inspecting Mode");
+                            curInspectItem.gameObject.layer = 7;
+                            dofEffect.SetActive(true);
+                            inspectCamera.SetActive(true);
                             if (curInspectItem == null)
                             {
                                 playerUI.ShowHandMenu(Side.Both, false);
@@ -210,8 +215,10 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (Input.GetKeyDown("f"))
             {
+                curInspectItem.gameObject.layer = 0;
                 StopInspectObject();
-                dofEffect.gameObject.SetActive(false);
+                dofEffect.SetActive(false);
+                inspectCamera.SetActive(false);
                 return;
             }
             float mouseX = Input.GetAxis("Mouse X");

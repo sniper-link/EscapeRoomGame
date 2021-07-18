@@ -963,7 +963,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1447808982
 Transform:
   m_ObjectHideFlags: 0
@@ -1649,7 +1649,11 @@ PrefabInstance:
     - target: {fileID: 33539938, guid: f664f637c85bff445b49f39bd8a22260, type: 3}
       propertyPath: dofEffect
       value: 
-      objectReference: {fileID: 61982614}
+      objectReference: {fileID: 61982613}
+    - target: {fileID: 33539938, guid: f664f637c85bff445b49f39bd8a22260, type: 3}
+      propertyPath: inspectCamera
+      value: 
+      objectReference: {fileID: 1447808981}
     - target: {fileID: 848143892, guid: f664f637c85bff445b49f39bd8a22260, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.25
