@@ -26,6 +26,7 @@ public class PlayerInteraction : MonoBehaviour
     public float timeBetweenAction = 0f;
     Interactable targetItem = null;
     Side inspectSide = Side.Both;
+    Interactable leftHandItemRef, rightHandItemRef;
 
     private void Awake()
     {
@@ -35,7 +36,78 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Start()
     {
-        
+
+    }
+
+    private void HandBehaviour(Side side, Interactable sideRef, Transform handPos)
+    {
+        if (sideRef != null)
+        {
+            playerUI.ShowHandMenu(side, sideRef != null);
+            if (Input.GetKeyDown("q"))
+            {
+                sideRef.DropItem(handPos, out bool dropSuccess);
+                if (dropSuccess)
+                {
+                    playerInventory.RemoveHandItem(side);
+                    playerUI.ShowHandUI(side, false);
+                }
+            }
+            if (Input.GetKeyDown("e"))
+            {
+                if (targetItem != null)
+                {
+                    targetItem.Use(sideRef, out bool useSuccess);
+                    if (useSuccess)
+                    {
+                        playerInventory.RemoveHandItem(side);
+                        playerUI.ShowHandUI(side, false);
+                    }
+                    return;
+                }
+                else
+                {
+                    // don't give the player the use option
+                    //Debug.Log("Can't use the current hand item with anything");
+                    UpdateHelpText("Can't use the current hand item with anything");
+                }
+            }
+            if (Input.GetKeyDown("f"))
+            {
+                InspectModeEnable(side, sideRef);
+            }
+        }
+    }
+
+    private void PickupBehaviour(Side side, Interactable sideRef, Transform handPos)
+    {
+        if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
+        {
+            playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
+            collectable.Interact(this);
+        }
+
+        if (sideRef == null)
+        {
+            if (targetItem != null && targetItem.canPickup)
+            {
+                playerInventory.AddHandItem(side, targetItem, handPos, out bool addSuccess);
+                playerUI.ShowHandHint(side, addSuccess);
+            }
+        }
+    }
+
+    private void InspectModeEnable(Side side, Interactable sideRef)
+    {
+        Debug.Log("Inspecting Mode");
+        dofEffect.SetActive(true);
+        inspectCamera.SetActive(true);
+        if (curInspectItem == null)
+        {
+            playerUI.ShowHandMenu(Side.Both, false);
+            inspectSide = side;
+            InspectObject(sideRef);
+        }
     }
 
     private void Update()
@@ -49,7 +121,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Collectable>();
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
-                
+
                 if (targetItem != null)
                 {
                     //Debug.Log("looking at an interactable object");
@@ -62,144 +134,31 @@ public class PlayerInteraction : MonoBehaviour
 
             playerUI.ShowMBAction(targetItem != null, (targetItem != null ? targetItem.objectName : ""));
 
-            playerInventory.GetInventoryItem(out Interactable leftHandItemRef, out Interactable rightHandItemRef);
+            playerInventory.GetInventoryItem(out leftHandItemRef, out rightHandItemRef);
             // left side will always be first
             {
                 // TO::DO add a cooldown between pick ups
-                
+
                 if (Input.GetMouseButton(0))
                 {
-                    if (leftHandItemRef != null)
-                    {
-                        playerUI.ShowHandMenu(Side.Left, leftHandItemRef != null);
-                        if (Input.GetKeyDown("q"))
-                        {
-                            leftHandItemRef.DropItem(leftHandPos, out bool dropSuccess);
-                            if (dropSuccess)
-                            {
-                                playerInventory.RemoveLeftHandItem();
-                                playerUI.ShowHandUI(Side.Left, false);
-                            }
-                        }
-                        if (Input.GetKeyDown("e"))
-                        {
-                            if (targetItem != null)
-                            {
-                                targetItem.Use(leftHandItemRef, out bool useSuccess);
-                                if (useSuccess)
-                                {
-                                    playerInventory.RemoveLeftHandItem();
-                                    playerUI.ShowHandUI(Side.Left, false);
-                                }
-                                return;
-                            }
-                            else
-                            {
-                                // don't give the player the use option
-                                //Debug.Log("Can't use the current hand item with anything");
-                                UpdateHelpText("Can't use the current hand item with anything");
-                            }
-                        }
-                        if (Input.GetKeyDown("f"))
-                        {
-                            Debug.Log("Inspecting Mode");
-                            dofEffect.SetActive(true);
-                            inspectCamera.SetActive(true);
-                            if (curInspectItem == null)
-                            {
-                                playerUI.ShowHandMenu(Side.Both, false);
-                                inspectSide = Side.Left;
-                                InspectObject(leftHandItemRef);
-                            }
-                        }
-                    }
+                    HandBehaviour(Side.Left, leftHandItemRef, leftHandPos);
                 }
-                
+
                 // LMB pickup events
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
-                    {
-                        playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
-                        collectable.Interact(this);
-                    }
-
-                    if (leftHandItemRef == null)
-                    {
-                        if (targetItem != null && targetItem.canPickup)
-                        {
-                            playerInventory.AddLeftHandItem(targetItem, leftHandPos, out bool addSuccess);
-                            playerUI.ShowHandHint(Side.Left, addSuccess);
-                        }
-                    }
+                    PickupBehaviour(Side.Left, leftHandItemRef, leftHandPos);
                 }
 
                 // right clicks
                 if (Input.GetMouseButton(1))
                 {
-                    if (rightHandItemRef != null)
-                    {
-                        playerUI.ShowHandMenu(Side.Right, rightHandItemRef != null);
-                        if (Input.GetKeyDown("q"))
-                        {
-                            rightHandItemRef.DropItem(rightHandPos, out bool dropSuccess);
-                            if (dropSuccess)
-                            {
-                                playerInventory.RemoveRightHandItem();
-                                playerUI.ShowHandUI(Side.Right, false);
-                            }
-                        }
-                        if (Input.GetKeyDown("e"))
-                        {
-                            if (targetItem != null)
-                            {
-                                targetItem.Use(rightHandItemRef, out bool useSuccess);
-                                if (useSuccess)
-                                {
-                                    playerInventory.RemoveRightHandItem();
-                                    playerUI.ShowHandUI(Side.Right, false);
-                                }
-                                return;
-                            }
-                            else
-                            {
-                                // don't give the player the use option
-                                //Debug.Log("Can't use the current hand item with anything");
-                                UpdateHelpText("Can't use the current hand item with anything");
-                            }
-                        }
-                        if (Input.GetKeyDown("f"))
-                        {
-                            Debug.Log("Inspecting Mode");
-                            curInspectItem.gameObject.layer = 7;
-                            dofEffect.SetActive(true);
-                            inspectCamera.SetActive(true);
-                            if (curInspectItem == null)
-                            {
-                                playerUI.ShowHandMenu(Side.Both, false);
-                                inspectSide = Side.Right;
-                                InspectObject(rightHandItemRef);
-                            }
-                        }
-                    }
+                    HandBehaviour(Side.Right, rightHandItemRef, rightHandPos);
                 }
-   
+
                 if (Input.GetMouseButtonDown(1))
                 {
-                    if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
-                    {
-                        playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
-                        collectable.Interact(this);
-                    }
-
-                    if (rightHandItemRef == null)
-                    {
-                        if (targetItem != null && targetItem.canPickup)
-                        {
-                            playerInventory.AddRightHandItem(targetItem, rightHandPos, out bool addSuccess);
-                            playerUI.ShowHandHint(Side.Right, addSuccess);
-                        }
-                    }
+                    PickupBehaviour(Side.Right, rightHandItemRef, rightHandPos);
                 }
 
                 playerUI.ShowHandMenu(Side.Left, Input.GetMouseButton(0) && leftHandItemRef != null);
@@ -251,7 +210,7 @@ public class PlayerInteraction : MonoBehaviour
 
     public void StopInspectObject()
     {
-        
+
         Debug.Log("Quit Inspect Mode");
         cameraController.UpdateCameraMode(CameraMode.PlayMode);
 
@@ -273,7 +232,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             Debug.LogWarning("Player Interaction is having trouble with inspect side");
         }
-        
+
         curInspectItem = null;
     }
 
