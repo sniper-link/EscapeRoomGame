@@ -39,77 +39,6 @@ public class PlayerInteraction : MonoBehaviour
 
     }
 
-    private void HandBehaviour(Side side, Interactable sideRef, Transform handPos)
-    {
-        if (sideRef != null)
-        {
-            playerUI.ShowHandMenu(side, sideRef != null);
-            if (Input.GetKeyDown("q"))
-            {
-                sideRef.DropItem(handPos, out bool dropSuccess);
-                if (dropSuccess)
-                {
-                    playerInventory.RemoveHandItem(side);
-                    playerUI.ShowHandUI(side, false);
-                }
-            }
-            if (Input.GetKeyDown("e"))
-            {
-                if (targetItem != null)
-                {
-                    targetItem.Use(sideRef, out bool useSuccess);
-                    if (useSuccess)
-                    {
-                        playerInventory.RemoveHandItem(side);
-                        playerUI.ShowHandUI(side, false);
-                    }
-                    return;
-                }
-                else
-                {
-                    // don't give the player the use option
-                    //Debug.Log("Can't use the current hand item with anything");
-                    UpdateHelpText("Can't use the current hand item with anything");
-                }
-            }
-            if (Input.GetKeyDown("f"))
-            {
-                InspectModeEnable(side, sideRef);
-            }
-        }
-    }
-
-    private void PickupBehaviour(Side side, Interactable sideRef, Transform handPos)
-    {
-        if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
-        {
-            playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
-            collectable.Interact(this);
-        }
-
-        if (sideRef == null)
-        {
-            if (targetItem != null && targetItem.canPickup)
-            {
-                playerInventory.AddHandItem(side, targetItem, handPos, out bool addSuccess);
-                playerUI.ShowHandHint(side, addSuccess);
-            }
-        }
-    }
-
-    private void InspectModeEnable(Side side, Interactable sideRef)
-    {
-        Debug.Log("Inspecting Mode");
-        dofEffect.SetActive(true);
-        inspectCamera.SetActive(true);
-        if (curInspectItem == null)
-        {
-            playerUI.ShowHandMenu(Side.Both, false);
-            inspectSide = side;
-            InspectObject(sideRef);
-        }
-    }
-
     private void Update()
     {
         if (cameraController.cameraMode == CameraMode.PlayMode)
@@ -174,7 +103,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (Input.GetKeyDown("f"))
             {
-                curInspectItem.gameObject.layer = 0;
+                ToggleDoFEffect(false);
                 StopInspectObject();
                 dofEffect.SetActive(false);
                 inspectCamera.SetActive(false);
@@ -185,7 +114,7 @@ public class PlayerInteraction : MonoBehaviour
 
             // TO::DO need to add rotation to the inspected objects base on the camera
             //Sets the Layer of the inspected object to "DoF" to only be rendered by the overlay camera
-            curInspectItem.gameObject.layer = 7;
+            ToggleDoFEffect(true);
             Vector3 oldRot = curInspectItem.transform.rotation.eulerAngles;
             curInspectItem.transform.rotation = Quaternion.Euler(oldRot + new Vector3(mouseY, -mouseX, 0f));
         }
@@ -195,6 +124,91 @@ public class PlayerInteraction : MonoBehaviour
         if (Input.GetKeyDown("b"))
         {
             playerInventory.storage.OutputStorage();
+        }
+    }
+
+    private void HandBehaviour(Side side, Interactable sideRef, Transform handPos)
+    {
+        if (sideRef != null)
+        {
+            playerUI.ShowHandMenu(side, sideRef != null);
+            if (Input.GetKeyDown("q"))
+            {
+                sideRef.DropItem(handPos, out bool dropSuccess);
+                if (dropSuccess)
+                {
+                    playerInventory.RemoveHandItem(side);
+                    playerUI.ShowHandUI(side, false);
+                }
+            }
+            if (Input.GetKeyDown("e"))
+            {
+                if (targetItem != null)
+                {
+                    targetItem.Use(sideRef, out bool useSuccess);
+                    if (useSuccess)
+                    {
+                        playerInventory.RemoveHandItem(side);
+                        playerUI.ShowHandUI(side, false);
+                    }
+                    return;
+                }
+                else
+                {
+                    // don't give the player the use option
+                    //Debug.Log("Can't use the current hand item with anything");
+                    UpdateHelpText("Can't use the current hand item with anything");
+                }
+            }
+            if (Input.GetKeyDown("f"))
+            {
+                InspectModeEnable(side, sideRef);
+            }
+        }
+    }
+
+    private void ToggleDoFEffect(bool enable)
+    {
+        MeshRenderer[] meshes = curInspectItem.GetComponentsInChildren<MeshRenderer>();
+        foreach (var item in meshes)
+        {
+            if (enable)
+            {
+                item.gameObject.layer = 7;
+                return;
+            }
+            item.gameObject.layer = 0;
+        }
+    }
+
+    private void PickupBehaviour(Side side, Interactable sideRef, Transform handPos)
+    {
+        if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
+        {
+            playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
+            collectable.Interact(this);
+        }
+
+        if (sideRef == null)
+        {
+            if (targetItem != null && targetItem.canPickup)
+            {
+                playerInventory.AddHandItem(side, targetItem, handPos, out bool addSuccess);
+                playerUI.ShowHandHint(side, addSuccess);
+            }
+        }
+    }
+
+    private void InspectModeEnable(Side side, Interactable sideRef)
+    {
+        Debug.Log("Inspecting Mode");
+        dofEffect.SetActive(true);
+        inspectCamera.SetActive(true);
+        if (curInspectItem == null)
+        {
+            playerUI.ShowHandMenu(Side.Both, false);
+            inspectSide = side;
+            InspectObject(sideRef);
         }
     }
 
