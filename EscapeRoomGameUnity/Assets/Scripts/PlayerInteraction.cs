@@ -50,6 +50,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Collectable>();
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
+                targetItem = playerVisionEnd.collider.GetComponentInParent<NewInteractable>();
 
                 if (targetItem != null)
                 {
