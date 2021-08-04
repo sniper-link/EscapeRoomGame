@@ -34,13 +34,20 @@ public class Door : Unlockable
         OpenDoor();
     }
 
-    public void OpenDoor()
+    public void OpenDoor(float delayTime=0)
     {
         Vector3 oldRotation = this.transform.eulerAngles;
         Quaternion newRotation = Quaternion.Euler(oldRotation.x, oldRotation.y + (isOpen ? -90f : 90), oldRotation.z);
         isOpen = !isOpen;
         canInteract = false;
-        StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
+        StartCoroutine(Delay(this.transform.rotation, newRotation, delayTime));
+        //StartCoroutine(DoorOpening(this.transform.rotation, newRotation, 0f));
+    }
+
+    IEnumerator Delay(Quaternion a, Quaternion b, float targetTime)
+    {
+        yield return new WaitForSeconds(targetTime);
+        StartCoroutine(DoorOpening(a, b, 0f));
     }
 
     IEnumerator DoorOpening(Quaternion a, Quaternion b, float curTime)

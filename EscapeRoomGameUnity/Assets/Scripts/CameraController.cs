@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 // TO::DO update camera controller script to reflect how camera works with inspection
 
 public class CameraController : MonoBehaviour
 {
     public Camera playerCamera;
+    public Camera inspectCamera;
     public GameObject player;
     public CameraMode cameraMode = CameraMode.OutOfFocus;
     public float rotateYSpeed = 10f;

@@ -1,17 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    public string objectName = "Egg";
+    public string itemName = "Egg";
     public bool canPickup = true;
     public Interactable storedObject;
 
-    public virtual void Interact(PlayerInteraction playerInteraction)
+    public event Action<Interactable> OnInteracted;
+
+    public virtual void Interact(PlayerInteraction playerInteraction = null)
     {
-        Debug.Log(objectName + ": print from interactable");
-        if (storedObject.TryGetComponent<Lock>(out Lock testLock))
+        //Debug.Log(itemName + ": print from interactable");
+        OnInteracted?.Invoke(this);
+        if (storedObject != null && storedObject.TryGetComponent<Lock>(out Lock testLock))
         {
             Debug.Log("Lol");
             testLock.insertedItem = null;

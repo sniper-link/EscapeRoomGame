@@ -1301,9 +1301,10 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 2803228025414013644}
   m_Father: {fileID: 2803228024459601651}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2803228023996996227
 Camera:
@@ -1490,7 +1491,7 @@ MonoBehaviour:
   inspectCamera: {fileID: 2803228023996996239}
   curInspectItem: {fileID: 0}
   tossForce: 500
-  playerVisionDis: 2
+  playerVisionDis: 3
   timeBetweenAction: 0
 --- !u!1 &2803228024459601660
 GameObject:
@@ -1524,7 +1525,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7340479362743920168}
-  - {fileID: 2803228025414013644}
   - {fileID: 2803228023996996236}
   m_Father: {fileID: 2803228024194189055}
   m_RootOrder: 0
@@ -1626,6 +1626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 2803228024459601650}
+  inspectCamera: {fileID: 0}
   player: {fileID: 2803228024194189054}
   cameraMode: 3
   rotateYSpeed: 500
@@ -1649,7 +1650,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2803228025414013644
 Transform:
   m_ObjectHideFlags: 0
@@ -1657,12 +1658,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2803228025414013647}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2803228024459601651}
-  m_RootOrder: 1
+  m_Father: {fileID: 2803228023996996236}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2803228025414013634
 MonoBehaviour:

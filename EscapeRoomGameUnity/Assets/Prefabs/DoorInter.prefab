@@ -13,29 +13,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0056084716, y: 0.012622106, z: 0.008315756}
   m_Center: {x: 0.000000035623096, y: 0, z: 0.004157811}
---- !u!114 &1421218595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132147632048305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5a932521325bf4da13dffb90b24e2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectName: Egg
-  canPickup: 0
-  storedObject: {fileID: 0}
-  targetDoor: {fileID: 8543491684168874723}
-  targetUnlockable: {fileID: 0}
-  targetKey: {fileID: 0}
-  insertedItem: {fileID: 0}
-  isLocked: 1
-  unlockedAudio: {fileID: 8300000, guid: 8f0a093a146318d4b8dc700a866b0282, type: 3}
-  lockedAudio: {fileID: 8300000, guid: d49107ff28a17d744923b00bb98ae3b6, type: 3}
-  playSource: {fileID: 1679674799}
 --- !u!82 &1679674799
 AudioSource:
   m_ObjectHideFlags: 0
@@ -132,6 +109,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1421218595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147632048305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b5a932521325bf4da13dffb90b24e2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectName: Door Handle
+  canPickup: 0
+  storedObject: {fileID: 0}
+  targetDoor: {fileID: 8543491684168874723}
+  targetUnlockable: {fileID: 0}
+  targetKey: {fileID: 0}
+  insertedItem: {fileID: 0}
+  isLocked: 1
+  unlockedAudio: {fileID: 8300000, guid: 8f0a093a146318d4b8dc700a866b0282, type: 3}
+  lockedAudio: {fileID: 8300000, guid: d49107ff28a17d744923b00bb98ae3b6, type: 3}
+  playSource: {fileID: 1679674799}
 --- !u!1 &8814104922650106942
 GameObject:
   m_ObjectHideFlags: 0

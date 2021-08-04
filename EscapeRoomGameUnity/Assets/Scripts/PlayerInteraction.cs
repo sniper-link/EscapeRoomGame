@@ -48,9 +48,9 @@ public class PlayerInteraction : MonoBehaviour
 
             if (Physics.Raycast(playerVision, out playerVisionEnd, playerVisionDis))
             {
-                targetItem = playerVisionEnd.collider.GetComponentInParent<Collectable>();
+                //targetItem = playerVisionEnd.collider.GetComponentInParent<Collectable>();
                 targetItem = playerVisionEnd.collider.GetComponentInParent<Interactable>();
-                targetItem = playerVisionEnd.collider.GetComponentInParent<NewInteractable>();
+                //targetItem = playerVisionEnd.collider.GetComponentInParent<NewInteractable>();
 
                 if (targetItem != null)
                 {
@@ -62,7 +62,7 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
 
-            playerUI.ShowMBAction(targetItem != null, (targetItem != null ? targetItem.objectName : ""));
+            playerUI.ShowMBAction(targetItem != null, (targetItem != null ? targetItem.itemName : ""));
 
             playerInventory.GetInventoryItem(out leftHandItemRef, out rightHandItemRef);
             // left side will always be first
@@ -71,24 +71,24 @@ public class PlayerInteraction : MonoBehaviour
 
                 if (Input.GetMouseButton(0))
                 {
-                    HandBehaviour(Side.Left, leftHandItemRef, leftHandPos);
+                    HandAction(Side.Left, leftHandItemRef, leftHandPos);
                 }
 
                 // LMB pickup events
                 if (Input.GetMouseButtonDown(0))
                 {
-                    PickupBehaviour(Side.Left, leftHandItemRef, leftHandPos);
+                    PickupAction(Side.Left, leftHandItemRef, leftHandPos);
                 }
 
                 // right clicks
                 if (Input.GetMouseButton(1))
                 {
-                    HandBehaviour(Side.Right, rightHandItemRef, rightHandPos);
+                    HandAction(Side.Right, rightHandItemRef, rightHandPos);
                 }
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    PickupBehaviour(Side.Right, rightHandItemRef, rightHandPos);
+                    PickupAction(Side.Right, rightHandItemRef, rightHandPos);
                 }
 
                 playerUI.ShowHandMenu(Side.Left, Input.GetMouseButton(0) && leftHandItemRef != null);
@@ -102,20 +102,23 @@ public class PlayerInteraction : MonoBehaviour
         }
         else if (cameraController.cameraMode == CameraMode.InspectMode)
         {
+            // exit inspect mode
             if (Input.GetKeyDown("f"))
             {
-                ToggleDoFEffect(false);
-                StopInspectObject();
-                dofEffect.SetActive(false);
-                inspectCamera.SetActive(false);
+                SetInspectView(false);
                 return;
             }
+
+
+            // updates inspected object base on mouse rotate
+            // TO::DO show mouse while inspecting item 
+            // so it looks like the player is draging the object
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
 
             // TO::DO need to add rotation to the inspected objects base on the camera
-            //Sets the Layer of the inspected object to "DoF" to only be rendered by the overlay camera
-            ToggleDoFEffect(true);
+            // Sets the Layer of the inspected object to "DoF" to only be rendered by the overlay camera
+
             Vector3 oldRot = curInspectItem.transform.rotation.eulerAngles;
             curInspectItem.transform.rotation = Quaternion.Euler(oldRot + new Vector3(mouseY, -mouseX, 0f));
         }
@@ -128,127 +131,98 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    private void HandBehaviour(Side side, Interactable sideRef, Transform handPos)
+    private void HandAction(Side itemSide, Interactable itemRef, Transform handPos)
     {
-        if (sideRef != null)
+        // TO::DO get rid of Transform handPos from function arguement
+        if (itemRef != null)
         {
-            playerUI.ShowHandMenu(side, sideRef != null);
+            playerUI.ShowHandMenu(itemSide, itemRef != null);
             if (Input.GetKeyDown("q"))
             {
-                sideRef.DropItem(handPos, out bool dropSuccess);
+                itemRef.DropItem(handPos, out bool dropSuccess);
                 if (dropSuccess)
                 {
-                    playerInventory.RemoveHandItem(side);
-                    playerUI.ShowHandUI(side, false);
+                    playerInventory.RemoveHandItem(itemSide);
+                    playerUI.ShowHandUI(itemSide, false);
                 }
             }
             if (Input.GetKeyDown("e"))
             {
                 if (targetItem != null)
                 {
-                    targetItem.Use(sideRef, out bool useSuccess);
+                    targetItem.Use(itemRef, out bool useSuccess);
                     if (useSuccess)
                     {
-                        playerInventory.RemoveHandItem(side);
-                        playerUI.ShowHandUI(side, false);
+                        playerInventory.RemoveHandItem(itemSide);
+                        playerUI.ShowHandUI(itemSide, false);
                     }
                     return;
                 }
                 else
                 {
-                    // don't give the player the use option
-                    //Debug.Log("Can't use the current hand item with anything");
                     UpdateHelpText("Can't use the current hand item with anything");
                 }
             }
             if (Input.GetKeyDown("f"))
             {
-                InspectModeEnable(side, sideRef);
+                if (curInspectItem == null)
+                    SetInspectView(true, itemSide, itemRef);
             }
         }
     }
 
-    private void ToggleDoFEffect(bool enable)
+    private void PickupAction(Side itemSide, Interactable itemRef, Transform handPos)
     {
-        MeshRenderer[] meshes = curInspectItem.GetComponentsInChildren<MeshRenderer>();
-        foreach (var item in meshes)
-        {
-            if (enable)
-            {
-                item.gameObject.layer = 7;
-                return;
-            }
-            item.gameObject.layer = 0;
-        }
-    }
-
-    private void PickupBehaviour(Side side, Interactable sideRef, Transform handPos)
-    {
+        // TO::DO need to fix this, should not be using targetItem, rather itemRef
         if (targetItem != null && targetItem.TryGetComponent(out Collectable collectable))
         {
             playerInventory.storage.AddItemToList(collectable.data, collectable.objectType);
             collectable.Interact(this);
         }
 
-        if (sideRef == null)
+        if (itemRef == null)
         {
             if (targetItem != null && targetItem.canPickup)
             {
-                playerInventory.AddHandItem(side, targetItem, handPos, out bool addSuccess);
-                playerUI.ShowHandHint(side, addSuccess);
+                playerInventory.AddHandItem(itemSide, targetItem, handPos, out bool addSuccess);
+                playerUI.ShowHandHint(itemSide, addSuccess);
             }
         }
     }
 
-    private void InspectModeEnable(Side side, Interactable sideRef)
+    private void SetInspectView(bool isActive, Side itemSide = Side.Both, Interactable itemRef = null)
     {
-        Debug.Log("Inspecting Mode");
-        dofEffect.SetActive(true);
-        inspectCamera.SetActive(true);
-        if (curInspectItem == null)
+        MeshRenderer[] meshes = (curInspectItem ?? itemRef)?.GetComponentsInChildren<MeshRenderer>() ?? new MeshRenderer[] { };
+        if (isActive)
         {
             playerUI.ShowHandMenu(Side.Both, false);
-            inspectSide = side;
-            InspectObject(sideRef);
-        }
-    }
-
-    public void InspectObject(Interactable targetItem)
-    {
-        playerUI.ShowHandMenu(Side.Both, false);
-        curInspectItem = targetItem;
-        cameraController.UpdateCameraMode(CameraMode.InspectMode);
-        targetItem.transform.parent = inspectPos;
-        targetItem.transform.SetPositionAndRotation(inspectPos.position, Quaternion.Euler(0, 0, 0));
-        curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-    }
-
-    public void StopInspectObject()
-    {
-
-        Debug.Log("Quit Inspect Mode");
-        cameraController.UpdateCameraMode(CameraMode.PlayMode);
-
-        if (inspectSide == Side.Left)
-        {
-            curInspectItem.transform.parent = leftHandPos.transform;
-            curInspectItem.transform.SetPositionAndRotation(leftHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+            curInspectItem = itemRef;
+            inspectSide = itemSide;
+            cameraController.UpdateCameraMode(CameraMode.InspectMode);
+            curInspectItem.transform.parent = inspectPos;
+            curInspectItem.transform.SetPositionAndRotation(inspectPos.position, Quaternion.Euler(0, 0, 0));
             curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            // ^ might be overkill
         }
-        else if (inspectSide == Side.Right)
+        else if (!isActive)
         {
-            curInspectItem.transform.parent = rightHandPos.transform;
-            curInspectItem.transform.SetPositionAndRotation(rightHandPos.transform.position, Quaternion.Euler(0, 0, 0));
+            Debug.Log("Quit Inspect Mode");
+            cameraController.UpdateCameraMode(CameraMode.PlayMode);
+
+            curInspectItem.transform.parent = inspectSide == 0 ? leftHandPos : rightHandPos;
+            curInspectItem.transform.localPosition = new Vector3(0, 0, 0);
             curInspectItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            // ^ might be overkill
+            curInspectItem = null;
         }
         else
         {
-            Debug.LogWarning("Player Interaction is having trouble with inspect side");
+            Debug.LogWarning("PlayerInteraction: Trouble going into inspect mode with current item");
         }
 
-        curInspectItem = null;
+        inspectCamera.SetActive(isActive);
+        foreach (var mesh in meshes)
+        {
+            mesh.gameObject.layer = (isActive ? 7 : 0);
+        }
     }
 
     public void UpdateHelpText(string newInfoText)

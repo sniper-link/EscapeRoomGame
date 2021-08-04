@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor;
 
 public class Event : MonoBehaviour
 {
@@ -14,14 +15,5 @@ public class Event : MonoBehaviour
     public List<Event> requiredIncomplete;
     public List<Event> incompletes;
     public List<NewInteractable> trigger;
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
+

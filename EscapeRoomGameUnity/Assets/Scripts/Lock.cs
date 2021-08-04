@@ -33,7 +33,9 @@ public class Lock : Interactable
             //Debug.Log(name + " is currently locked");
         else
             playerInteraction.UpdateHelpText(name + " is UNLOCKED");
-            //Debug.Log(name + " is currently unlocked");
+        //Debug.Log(name + " is currently unlocked");
+
+        //base.Interact(playerInteraction);
     }
 
     public override void Use(Interactable targetItem, out bool useSuccess)
@@ -62,6 +64,7 @@ public class Lock : Interactable
                     targetDoor.UpdateLocks(this);
                     // prevent further interaction
                     this.DisableItem();
+                    base.Interact();
                 }
                 else if (insertedItem == null)
                 {
