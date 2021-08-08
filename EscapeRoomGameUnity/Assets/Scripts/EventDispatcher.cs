@@ -3,28 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor;
 
-/*
 // use a serializable sturct to get the state of things
 [System.Serializable]
 public struct EventChecker
 {
-    public CustomEvent targetEvent;
+    public EventDispatcher targetEvent;
     public bool isCompleted;
-}*/
+}
 
-public class CustomEvent : MonoBehaviour
+public class EventDispatcher : MonoBehaviour
 {
+    [Tooltip("These Event(s) will be called when this event completes")]
     public UnityEvent OnCompeleteEvent;
+    [Tooltip("These Event(s) will be called when this event resets")]
     public UnityEvent OnResetEvent;
     public Interactable targetInteractable;
     public List<EventChecker> requiredEvents;
     public bool isCompleted = false;
-    public bool canReset = false;
-    public bool resetAfterComplete = false;
-    public bool useResetEventOnUncomplete = false;
+    public bool canReset = true;
 
-    /*public event Action<CustomEvent> OnCompleted;
+    public event Action<EventDispatcher> OnCompleted;
 
     private void Awake()
     {
@@ -48,8 +48,8 @@ public class CustomEvent : MonoBehaviour
         if (!isCompleted)
         {
             OnCompeleteEvent.Invoke();
-            OnCompleted?.Invoke(this);
             isCompleted = true;
+            OnCompleted?.Invoke(this);
         }
         else if (isCompleted && canReset)
         {
@@ -63,11 +63,11 @@ public class CustomEvent : MonoBehaviour
         isCompleted = true;
         OnCompeleteEvent.Invoke();
     }
-    
+
     public void SetEventUncomplete()
     {
         isCompleted = false;
-        if (useResetEventOnUncomplete)
+        if (canReset)
         {
             OnResetEvent.Invoke();
         }
@@ -78,5 +78,39 @@ public class CustomEvent : MonoBehaviour
         isCompleted = false;
         OnResetEvent.Invoke();
         // reset the targetInteractable
-    }*/
+    }
+
+    public void ClearEvent()
+    {
+        Debug.Log("Clear Event");
+        OnCompeleteEvent = new UnityEvent();
+        OnResetEvent = new UnityEvent();
+        targetInteractable = null;
+        requiredEvents = new List<EventChecker>();
+    }
+
+    public void DisableEvent()
+    {
+        canReset = false;
+    }
 }
+
+/*
+[CustomEditor(typeof(EventDispatcher))]
+public class EventDispatcherEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        // Draw the attribute from the EventDispatcher Class
+        base.OnInspectorGUI();
+
+        // Draw Custom layouts
+
+        // Draw a button that will reset events in the target EventDispatcher
+        if (GUILayout.Button("Clear Event"))
+        {
+            ((EventDispatcher)target).ClearEvent();
+        }
+    }
+}*/
+

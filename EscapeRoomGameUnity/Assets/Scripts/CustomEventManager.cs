@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class CustomEventManager : MonoBehaviour
 {
     public UnityEvent OnFinalEvents;
-    public List<CustomEvent> tiedEvents = new List<CustomEvent>();
+    public List<EventDispatcher> tiedEvents = new List<EventDispatcher>();
     public bool inSequence = false;
-    Queue<CustomEvent> queuedEvents = new Queue<CustomEvent>();
+    public Queue<EventDispatcher> queuedEvents = new Queue<EventDispatcher>();
+    public EventDispatcher[] showList;
 
     private void Awake()
     {
@@ -18,19 +20,35 @@ public class CustomEventManager : MonoBehaviour
         }
     }
 
-    public void HandleActivateEvent(CustomEvent customEvent)
+    public void HandleActivateEvent(EventDispatcher targetEvent)
     {
-        Debug.Log("onComplete evne");
-        queuedEvents.Enqueue(customEvent);
-        foreach(var tiedEve in tiedEvents)
+        //Debug.Log("onComplete evne" + targetEvent);
+        if (!queuedEvents.Contains(targetEvent))
         {
-            if (!queuedEvents.Contains(tiedEve))
-            {
-                return;
-            }
+            queuedEvents.Enqueue(targetEvent);
         }
-
-        // if all events are complete
-        OnFinalEvents.Invoke();
+        
+        showList = queuedEvents.ToArray();
+        /*foreach (var tiedEven in queuedEvents)
+        {
+            //if (queuedEvents)
+        }*/
+        if (tiedEvents.Count == showList.Length)
+        {
+            if (tiedEvents.SequenceEqual(showList))
+            {
+                OnFinalEvents.Invoke();
+            }
+            else
+            {
+                queuedEvents.Clear();
+                foreach (var tiedEve in tiedEvents)
+                {
+                    tiedEve.ResetEvent();
+                }
+            }
+            // if all events are complete
+            
+        }
     }
 }

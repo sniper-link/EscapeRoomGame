@@ -12,6 +12,7 @@ public class Lock : Interactable
     public AudioClip unlockedAudio;
     public AudioClip lockedAudio;
     public AudioSource playSource;
+    public EventChecker requiredEvent;
 
     // TO::DO add key variables instead of Interactable variable
 
@@ -51,7 +52,7 @@ public class Lock : Interactable
                 targetItem.transform.parent = this.transform;
                 targetItem.transform.localPosition = new Vector3(0, 0, 0);
                 targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                if (insertedItem == targetKey)
+                if (insertedItem == targetKey && requiredEvent.targetEvent.isCompleted == requiredEvent.isCompleted)
                 {
                     //Debug.Log("The correct key was used");
                     insertedItem.transform.Rotate(new Vector3(0, 0, 90), Space.Self);
