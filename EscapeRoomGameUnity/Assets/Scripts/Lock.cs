@@ -52,7 +52,8 @@ public class Lock : Interactable
                 targetItem.transform.parent = this.transform;
                 targetItem.transform.localPosition = new Vector3(0, 0, 0);
                 targetItem.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                if (insertedItem == targetKey && requiredEvent.targetEvent.isCompleted == requiredEvent.isCompleted)
+                //if (insertedItem == targetKey && requiredEvent.targetEvent.isCompleted == requiredEvent.isCompleted)
+                if (insertedItem == targetKey)
                 {
                     //Debug.Log("The correct key was used");
                     insertedItem.transform.Rotate(new Vector3(0, 0, 90), Space.Self);
